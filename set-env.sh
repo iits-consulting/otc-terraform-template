@@ -13,7 +13,7 @@ export TF_VAR_region="eu-de"
 export TF_VAR_context="showcase"
 # Current Stage you are working on for example dev,qa, prod etc.
 export TF_VAR_stage="dev"
-export OS_PROJECT_NAME="${TF_VAR_region}_${TF_VAR_context}-${TF_VAR_stage}"
+export OS_PROJECT_NAME="eu-de"
 
 # ArgoCD/K8s config
 export TF_VAR_registry_credentials_dockerconfig_username="REPLACE_ME"

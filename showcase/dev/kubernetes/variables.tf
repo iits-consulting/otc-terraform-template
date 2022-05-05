@@ -35,8 +35,3 @@ variable "argocd_git_access_token" {
   description = "Git Access Token for ArgoCD"
   sensitive   = true
 }
-variable "argocd_git_access_token_app_charts" {
-  type        = string
-  description = "Git Access Token for App Charts Repository"
-  sensitive   = true
-}

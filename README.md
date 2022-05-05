@@ -17,6 +17,7 @@
       - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
          - It will take like 10-15 Minutes till everything is up
+         - Sometimes it fails because so many requests are executed so just try again
 
 ## Try out if the cluster is available
 - execute inside your shell "source ./shell-helper.sh"

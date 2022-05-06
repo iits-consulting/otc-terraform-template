@@ -15,9 +15,11 @@
    - Adjust variables.tf to your needs
    - Add or remove some modules from main.tf if you like
       - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
-   - Execute Terraform init and apply
-         - It will take like 10-15 Minutes till everything is up
-         - Sometimes it fails because so many requests are executed so just try again
+      - Execute Terraform init and apply
+        - It will take like 10-15 Minutes till everything is up
+      - If it fails most probably you need to activate CCE Access. Go to the OTC UI to the CCE which you created and press agree
+        ![cce-allow](./cce-allow-screenshot.png)
+
 
 ## Try out if the cluster is available
 - execute inside your shell "source ./shell-helper.sh"

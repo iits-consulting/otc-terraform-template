@@ -1,10 +1,11 @@
 data "opentelekomcloud_identity_project_v3" "current" {}
 
+# Only one Cloud Tracing Service can be used inside a otc tenant
 module "cloud_tracing_service" {
   providers    = { opentelekomcloud = opentelekomcloud.top_level_project }
   source       = "iits-consulting/project-factory/opentelekomcloud//modules/cloud_tracing_service"
   version      = "4.0.0"
-  bucket_name  = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-cts"), "_", "-")
+  bucket_name  = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-cts"), "_", "-")
   project_name = data.opentelekomcloud_identity_project_v3.current.name
 }
 
@@ -67,7 +68,7 @@ module "encyrpted_secrets_bucket" {
   providers         = { opentelekomcloud = opentelekomcloud.top_level_project }
   source            = "iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_writer"
   version           = "4.0.0"
-  bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-stage-secrets"), "_", "-")
+  bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   secrets = {
     elb_id                  = module.loadbalancer.elb_id

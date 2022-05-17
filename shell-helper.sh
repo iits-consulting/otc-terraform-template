@@ -7,7 +7,7 @@ function getStageSecretsBucket(){
     return 1
   fi
   PROJECT=${OS_PROJECT_NAME/"_"/"-"}
-  CONTEXT=${$TF_VAR_context/"_"/"-"}
+  CONTEXT=${TF_VAR_context/"_"/"-"}
   BUCKET_NAME=$PROJECT-$CONTEXT-$TF_VAR_stage-stage-secrets
   secretspath="/terraform-secrets"
   current_date=$(date +'%a, %d %b %Y %H:%M:%S %z')

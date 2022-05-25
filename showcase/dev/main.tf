@@ -26,8 +26,8 @@ data "opentelekomcloud_images_image_v2" "ubuntu" {
 }
 
 module "jumphost" {
-  source  = "iits-consulting/project-factory/opentelekomcloud//modules/jumphost"
-  version = "4.0.1"
+  source            = "iits-consulting/project-factory/opentelekomcloud//modules/jumphost"
+  version           = "4.0.1"
   vpc_id            = module.vpc.vpc.id
   subnet_id         = values(module.vpc.subnets)[0].id
   node_name         = "${var.context}-${var.stage}-jumphost"

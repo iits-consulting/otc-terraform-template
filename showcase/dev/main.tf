@@ -4,14 +4,14 @@ data "opentelekomcloud_identity_project_v3" "current" {}
 module "cloud_tracing_service" {
   providers    = { opentelekomcloud = opentelekomcloud.top_level_project }
   source       = "iits-consulting/project-factory/opentelekomcloud//modules/cloud_tracing_service"
-  version      = "4.0.1"
+  version      = "4.1.2"
   bucket_name  = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-cts"), "_", "-")
   project_name = data.opentelekomcloud_identity_project_v3.current.name
 }
 
 module "vpc" {
   source     = "iits-consulting/project-factory/opentelekomcloud//modules/vpc"
-  version    = "4.0.1"
+  version    = "4.1.2"
   name       = "${var.context}-${var.stage}-vpc"
   tags       = local.tags
   cidr_block = var.vpc_cidr
@@ -20,24 +20,9 @@ module "vpc" {
   }
 }
 
-data "opentelekomcloud_images_image_v2" "ubuntu" {
-  name       = "Standard_Ubuntu_20.04_latest"
-  visibility = "public"
-}
-
-module "jumphost" {
-  source            = "iits-consulting/project-factory/opentelekomcloud//modules/jumphost"
-  version           = "4.0.1"
-  vpc_id            = module.vpc.vpc.id
-  subnet_id         = values(module.vpc.subnets)[0].id
-  node_name         = "${var.context}-${var.stage}-jumphost"
-  node_image_id     = data.opentelekomcloud_images_image_v2.ubuntu.id
-  users_config_path = "${path.root}/users.yaml"
-}
-
 module "cce" {
   source  = "iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version = "4.0.1"
+  version = "4.1.2"
   name    = "${var.context}-${var.stage}"
 
   cluster_config = {
@@ -62,7 +47,7 @@ module "cce" {
 
 module "loadbalancer" {
   source       = "iits-consulting/project-factory/opentelekomcloud//modules/loadbalancer"
-  version      = "4.0.1"
+  version      = "4.1.2"
   context_name = var.context
   subnet_id    = module.vpc.subnets["${var.context}-${var.stage}-subnet"].subnet_id
   stage_name   = var.stage
@@ -71,7 +56,7 @@ module "loadbalancer" {
 
 module "private_dns" {
   source  = "iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
-  version = "4.0.1"
+  version = "4.1.2"
   domain  = "internal.${var.context}.de"
   a_records = {
     example = ["192.168.0.0"]
@@ -82,7 +67,7 @@ module "private_dns" {
 module "encyrpted_secrets_bucket" {
   providers         = { opentelekomcloud = opentelekomcloud.top_level_project }
   source            = "iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_writer"
-  version           = "4.0.1"
+  version           = "4.1.2"
   bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   secrets = {

@@ -23,23 +23,6 @@ module "snat" {
   tags          = local.tags
 }
 
-
-data "opentelekomcloud_images_image_v2" "ubuntu" {
-  name       = "Standard_Ubuntu_20.04_latest"
-  visibility = "public"
-}
-
-module "jumphost" {
-  source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/jumphost"
-  version           = "4.1.7"
-  vpc_id            = module.vpc.vpc.id
-  subnet_id         = module.vpc.subnets["kubernetes-subnet"].id
-  node_name         = "${var.context}-${var.stage}-jumphost"
-  node_image_id     = data.opentelekomcloud_images_image_v2.ubuntu.id
-  users_config_path = "${path.root}/users.yaml"
-  tags              = local.tags
-}
-
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
   version = "4.1.7"

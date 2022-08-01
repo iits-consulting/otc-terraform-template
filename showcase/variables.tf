@@ -1,7 +1,13 @@
 variable "region" {
   type        = string
   description = "OTC region for the project: eu-de(default) or eu-nl"
+  default     = "eu-de"
+  validation {
+    condition     = contains(["eu-de", "eu-nl", "eu-ch"], var.region)
+    error_message = "Allowed values for region are \"eu-de\", \"eu-nl\" or \"eu-ch\"."
+  }
 }
+
 
 variable "availability_zones" {
   type        = list(string)
@@ -24,6 +30,16 @@ variable "cluster_config" {
     nodes_count       = number // Number of nodes to create
     nodes_max         = number // Maximum limit of servers to create
   })
+}
+
+variable "domain_name" {
+  type        = string
+  description = "The public domain to create public DNS zone for."
+}
+
+variable "email" {
+  description = "E mail contact address for DNS zone."
+  type        = string
 }
 
 variable "context" {

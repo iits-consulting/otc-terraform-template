@@ -1,11 +1,15 @@
 terraform {
-  required_version = "v1.1.4"
+  required_version = "v1.1.7"
   #TODO Add Backend Config here
 
   required_providers {
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
-      version = ">=1.28.2"
+      version = ">=1.29.5"
+    }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "3.6.0"
     }
   }
 }

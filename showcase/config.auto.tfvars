@@ -1,6 +1,5 @@
 availability_zones = [
   "eu-de-03",
-  "eu-de-01",
 ]
 vpc_cidr = "192.168.0.0/16"
 
@@ -13,3 +12,5 @@ cluster_config = {
   nodes_count       = 2
   nodes_max         = 4
 }
+
+email = "example@iits-consulting.de"

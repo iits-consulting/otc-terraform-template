@@ -1,5 +1,5 @@
 terraform {
-  required_version = "v1.1.4"
+  required_version = "v1.1.7"
   # TODO set the backend config here
   required_providers {
     opentelekomcloud = {

@@ -18,19 +18,19 @@ variable "stage" {
   description = "Project stage for resource naming and tagging."
 }
 
-variable "registry_credentials_dockerconfig_username" {
+variable "dockerhub_username" {
   type        = string
   description = "Username of Docker Registry Credentials for ArgoCD"
   sensitive   = true
 }
 
-variable "registry_credentials_dockerconfig_password" {
+variable "dockerhub_password" {
   type        = string
   description = "Password of Docker Registry Credentials for ArgoCD"
   sensitive   = true
 }
 
-variable "argocd_git_access_token" {
+variable "git_token" {
   type        = string
   description = "Git Access Token for ArgoCD"
   sensitive   = true

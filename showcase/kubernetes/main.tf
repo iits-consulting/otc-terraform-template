@@ -1,8 +1,8 @@
 data "opentelekomcloud_identity_project_v3" "current" {}
 
 module "terraform_secrets_from_encrypted_s3_bucket" {
-  source            = "iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
-  version           = "4.1.5"
+  source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
+  version           = "4.1.7"
   bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   required_secrets = [
@@ -19,35 +19,45 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
 }
 
 locals {
-  dockerconfigjsonbase64 = base64encode(jsonencode({
+  dockerhubconfigjsonbase64 = base64encode(jsonencode({
     auths = {
       "https://index.docker.io/v1/" = {
-        username = var.registry_credentials_dockerconfig_username
-        password = var.registry_credentials_dockerconfig_password
-        auth     = base64encode("${var.registry_credentials_dockerconfig_username}:${var.registry_credentials_dockerconfig_password}")
+        username = var.dockerhub_username
+        password = var.dockerhub_password
+        auth     = base64encode("${var.dockerhub_username}:${var.dockerhub_password}")
       }
     }
   }))
 }
 
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    annotations = {
+      optimized-by-cce = true
+    }
+    name = "argocd"
+    labels = {
+      name = "argocd"
+    }
+  }
+}
+
 module "argocd" {
-  source  = "iits-consulting/bootstrap/argocd"
-  version = "1.0.1"
+  depends_on = [kubernetes_namespace.argocd]
+  source     = "registry.terraform.io/iits-consulting/bootstrap/argocd"
+  version    = "1.1.1"
 
-  ## Common CRD collection Configuration, see https://github.com/iits-consulting/crds-chart
   custom_resource_definitions_enabled = true
-
-  ### Registry Credentials Configuration for auto inject docker pull secrets, see https://github.com/iits-consulting/registry-creds-chart
-  registry_credentials_enabled      = true
-  registry_credentials_dockerconfig = local.dockerconfigjsonbase64
+  registry_credentials_enabled        = true
+  registry_credentials_dockerconfig   = local.dockerhubconfigjsonbase64
 
   ### ArgoCD Configuration
   argocd_namespace                 = "argocd"
   argocd_project_name              = "infrastructure-charts"
   argocd_git_access_token_username = "ARGO_CD_WITH_DEPLOYMENT"
-  argocd_git_access_token          = var.argocd_git_access_token
+  argocd_git_access_token          = var.git_token
   argocd_project_source_repo_url   = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
-  argocd_project_source_path       = "stages/${var.stage}/infrastructure-charts"
+  argocd_project_source_path       = "stages/${var.stage}"
   argocd_application_values = {
     global = {
       stage = var.stage

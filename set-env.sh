@@ -13,7 +13,8 @@ export TF_VAR_region="eu-de"
 export TF_VAR_context="iits"
 export TF_VAR_domain_name="showcase.iits.tech"
 export TF_VAR_stage="showcase"
-export OS_PROJECT_NAME="eu-de"
+#Example OS_PROJECT_NAME="${TF_VAR_region}_myproject"
+export OS_PROJECT_NAME="${TF_VAR_region}"
 
 # ArgoCD/K8s config
 export TF_VAR_dockerhub_username="REPLACE_ME"

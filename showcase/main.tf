@@ -2,7 +2,7 @@ data "opentelekomcloud_identity_project_v3" "current" {}
 
 module "vpc" {
   source     = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/vpc"
-  version    = "4.1.7"
+  version    = "4.2.2"
   name       = "${var.context}-${var.stage}-vpc"
   cidr_block = var.vpc_cidr
   subnets = {
@@ -15,17 +15,16 @@ module "snat" {
   // This module is necessary for internet access if the VPC is not in eu-de region.
   count         = var.region == "eu-de" ? 0 : 1
   source        = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/snat"
-  version       = "4.1.7"
+  version       = "4.2.2"
   name_prefix   = "${var.context}-${var.stage}"
-  subnet_id     = module.vpc.subnets["kubernetes-subnet"].subnet_id
+  subnet_id   = module.vpc.subnets["kubernetes-subnet"].id
   vpc_id        = module.vpc.vpc.id
-  network_cidrs = [var.vpc_cidr]
   tags          = local.tags
 }
 
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version = "4.1.7"
+  version = "4.2.2"
   name    = "${var.context}-${var.stage}"
 
   cluster_config = {
@@ -36,7 +35,10 @@ module "cce" {
     enable_scaling    = var.cluster_config.enable_scaling
   }
   node_config = {
-    availability_zones = var.availability_zones
+    availability_zones = [
+      "${var.region}-03",
+      "${var.region}-01"
+    ]
     node_count         = var.cluster_config.nodes_count
     node_flavor        = var.cluster_config.node_flavor
     node_storage_type  = var.cluster_config.node_storage_type
@@ -50,29 +52,17 @@ module "cce" {
 
 module "loadbalancer" {
   source       = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/loadbalancer"
-  version      = "4.1.7"
+  version      = "4.2.2"
   context_name = var.context
   subnet_id    = module.vpc.subnets["kubernetes-subnet"].subnet_id
   stage_name   = var.stage
   bandwidth    = 500
 }
 
-module "public_dns" {
-  source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
-  version = "4.1.7"
-  domain  = var.domain_name
-  email   = var.email
-  a_records = {
-    (var.domain_name)      = [module.loadbalancer.elb_public_ip]
-    "*.${var.domain_name}" = [module.loadbalancer.elb_public_ip]
-  }
-  tags = local.tags
-}
-
 module "encyrpted_secrets_bucket" {
   providers         = { opentelekomcloud = opentelekomcloud.top_level_project }
   source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_writer"
-  version           = "4.1.7"
+  version           = "4.2.2"
   bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   secrets = {

@@ -4,7 +4,7 @@ variable "region" {
   default     = "eu-de"
   validation {
     condition     = contains(["eu-de", "eu-nl"], var.region)
-    error_message = "Allowed values for region are \"eu-de\" and \"eu-nl\"."
+    error_message = "Currently only this regions are supported: \"eu-de\", \"eu-nl\"."
   }
 }
 

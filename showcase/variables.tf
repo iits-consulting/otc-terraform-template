@@ -3,15 +3,9 @@ variable "region" {
   description = "OTC region for the project: eu-de(default) or eu-nl"
   default     = "eu-de"
   validation {
-    condition     = contains(["eu-de", "eu-nl", "eu-ch"], var.region)
-    error_message = "Allowed values for region are \"eu-de\", \"eu-nl\" or \"eu-ch\"."
+    condition     = contains(["eu-de", "eu-nl"], var.region)
+    error_message = "Currently only this regions are supported: \"eu-de\", \"eu-nl\"."
   }
-}
-
-
-variable "availability_zones" {
-  type        = list(string)
-  description = "Availability zones for the OTC resources."
 }
 
 variable "vpc_cidr" {

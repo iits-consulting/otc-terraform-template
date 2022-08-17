@@ -13,10 +13,10 @@ function getStageSecretsBucket(){
   current_date=$(date +'%a, %d %b %Y %H:%M:%S %z')
   request_string="GET\n\n\n${current_date}\n/${BUCKET_NAME}${secretspath}"
   signed_reqest=$(echo -en "${request_string}" | openssl sha1 -hmac "${AWS_SECRET_ACCESS_KEY}" -binary | base64)
-  curl -s -H "Host: ${BUCKET_NAME}.obs.eu-de.otc.t-systems.com" \
+  curl -s -H "Host: ${BUCKET_NAME}.obs.${TF_VAR_region}.otc.t-systems.com" \
        -H "Date: ${current_date}" \
        -H "Authorization: AWS ${AWS_ACCESS_KEY_ID}:${signed_reqest}" \
-       "https://${BUCKET_NAME}.obs.eu-de.otc.t-systems.com${secretspath}"
+       "https://${BUCKET_NAME}.obs.${TF_VAR_region}.otc.t-systems.com${secretspath}"
 }
 
 function getKubectlConfig() {

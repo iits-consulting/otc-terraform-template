@@ -7,7 +7,5 @@ cluster_config = {
   node_storage_type = "SSD"
   node_storage_size = 100
   nodes_count       = 2
-  nodes_max         = 4
+  nodes_max         = 2
 }
-
-email = "example@iits-consulting.de"

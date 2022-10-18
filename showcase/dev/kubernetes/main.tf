@@ -43,24 +43,33 @@ resource "kubernetes_namespace" "argocd" {
 }
 
 module "argocd" {
-  depends_on = [kubernetes_namespace.argocd]
-  source     = "registry.terraform.io/iits-consulting/bootstrap/argocd"
-  version    = "1.1.1"
+  source  = "registry.terraform.io/iits-consulting/bootstrap/argocd"
+  version = "5.4.1"
 
+  ## Common CRD collection Configuration, see https://github.com/iits-consulting/crds-chart
   custom_resource_definitions_enabled = true
-  registry_credentials_enabled        = true
-  registry_credentials_dockerconfig   = local.dockerhubconfigjsonbase64
+
+
+  ### Registry Credentials Configuration for auto inject docker pull secrets, see https://github.com/iits-consulting/registry-creds-chart
+  registry_credentials_enabled      = true
+  registry_credentials_dockerconfig = local.dockerhubconfigjsonbase64
 
   ### ArgoCD Configuration
   argocd_namespace                 = "argocd"
   argocd_project_name              = "infrastructure-charts"
-  argocd_git_access_token_username = "ARGO_CD_WITH_DEPLOYMENT"
+  argocd_git_access_token_username = "argo"
   argocd_git_access_token          = var.git_token
   argocd_project_source_repo_url   = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
   argocd_project_source_path       = "stages/${var.stage}"
   argocd_application_values = {
     global = {
       stage = var.stage
+      helmValues = [
+        {
+          name = "dns.host"
+          value = "admin.${var.domain_name}"
+        }
+      ]
     }
     traefik = {
       terraformValues = [

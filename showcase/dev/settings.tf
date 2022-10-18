@@ -7,9 +7,5 @@ terraform {
       source  = "opentelekomcloud/opentelekomcloud"
       version = ">=1.29.5"
     }
-    vault = {
-      source  = "hashicorp/vault"
-      version = "3.6.0"
-    }
   }
 }

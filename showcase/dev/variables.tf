@@ -26,6 +26,16 @@ variable "cluster_config" {
   })
 }
 
+variable "context" {
+  type        = string
+  description = "Project context for resource naming and tagging."
+}
+
+variable "stage" {
+  type        = string
+  description = "Project stage for resource naming and tagging."
+}
+
 variable "domain_name" {
   type        = string
   description = "The public domain to create public DNS zone for."
@@ -36,15 +46,7 @@ variable "email" {
   type        = string
 }
 
-variable "context" {
-  type        = string
-  description = "Project context for resource naming and tagging."
-}
 
-variable "stage" {
-  type        = string
-  description = "Project stage for resource naming and tagging."
-}
 locals {
   prefix = replace(join("-", [lower(var.context), lower(var.stage)]), "_", "-")
   tags = {

@@ -11,7 +11,6 @@ export TF_VAR_region="eu-de"
 ##### PROJECT CONFIGURATION #####
 #Current Context you are working on can be customer name or cloud name etc.
 export TF_VAR_context="iits"
-export TF_VAR_domain_name="showcase.iits.tech"
 export TF_VAR_stage="showcase"
 #Example OS_PROJECT_NAME=$TF_VAR_region"_myproject"
 export OS_PROJECT_NAME="${TF_VAR_region}"
@@ -20,6 +19,10 @@ export OS_PROJECT_NAME="${TF_VAR_region}"
 export TF_VAR_dockerhub_username="REPLACE_ME"
 export TF_VAR_dockerhub_password="REPLACE_ME"
 export TF_VAR_git_token="REPLACE_ME"
+
+# DNS Config
+export TF_VAR_domain_name="REPLACE_ME" # example: my-domain.de
+export TF_VAR_email="REPLACE_ME" # example: mymail@mail.de
 
 #### TERRAFORM LOCAL PLUGIN CACHING #####
 mkdir -p ${HOME}/Terraform/plugins

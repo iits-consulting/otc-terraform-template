@@ -8,6 +8,7 @@
 - Adjust set-env.sh
     - ACCESS_KEY and SECRET_KEY you get from the OTC UI
     - If you are working on "eu-nl" please change TF_VAR_region to "eu-nl"
+    - Adjust other REPLACE_ME Placeholder values with correct values
 - Source set-env.sh
 - Go to terraform-remote-state-bucket-creation and execute terraform init and apply
    - Add the backend config under ${context}/${stage}/settings.tf
@@ -34,8 +35,6 @@
 ## Deploy GitOps and ArgoCD
 - Go into the folder ${context}/${stage}/kubernetes
 - Adjust ${context}/${stage}/kubernetes/main.tf
-  - Change argocd_git_access_token_username value to the right value
-  - Change argocd_project_source_repo_url to your git repo url
 - Execute Terraform init and apply
 - Now ArgoCD should boot up successfully
 

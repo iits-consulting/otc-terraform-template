@@ -4,7 +4,7 @@ variable "region" {
   default     = "eu-de"
   validation {
     condition     = contains(["eu-de", "eu-nl"], var.region)
-    error_message = "Currently only this regions are supported: \"eu-de\", \"eu-nl\"."
+    error_message = "Allowed values for region are \"eu-de\" and \"eu-nl\"."
   }
 }
 
@@ -18,19 +18,19 @@ variable "stage" {
   description = "Project stage for resource naming and tagging."
 }
 
-variable "dockerhub_username" {
+variable "registry_credentials_dockerconfig_username" {
   type        = string
   description = "Username of Docker Registry Credentials for ArgoCD"
   sensitive   = true
 }
 
-variable "dockerhub_password" {
+variable "registry_credentials_dockerconfig_password" {
   type        = string
   description = "Password of Docker Registry Credentials for ArgoCD"
   sensitive   = true
 }
 
-variable "git_token" {
+variable "argocd_git_access_token" {
   type        = string
   description = "Git Access Token for ArgoCD"
   sensitive   = true
@@ -39,4 +39,9 @@ variable "git_token" {
 variable "domain_name" {
   type        = string
   description = "The public domain to create public DNS zone for."
+}
+
+variable "email" {
+  description = "E-mail contact address for DNS zone."
+  type        = string
 }

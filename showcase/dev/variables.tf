@@ -54,14 +54,3 @@ locals {
     Context = var.context
   }
 }
-
-variable "domain_name" {
-  type        = string
-  description = "The public domain to create public DNS zone for."
-}
-
-variable "email" {
-  description = "E mail contact address for DNS zone."
-  type        = string
-}
-

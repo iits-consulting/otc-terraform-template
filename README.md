@@ -11,23 +11,23 @@
     - Adjust other REPLACE_ME Placeholder values with correct values
 - Source set-env.sh
 - Go to terraform-remote-state-bucket-creation and execute terraform init and apply
-   - Add the backend config under ${context}/${stage}/settings.tf
-   - Add the backend config under ${context}/${stage}/kubernetes/settings.tf
+    - Add the backend config under ${context}/${stage}/settings.tf
+    - Add the backend config under ${context}/${stage}/kubernetes/settings.tf
 - Go into the folder ${context}/${stage} (in this example it is showcase/dev)
-   - Adjust variables.tf to your needs
-   - Add or remove some modules from main.tf if you like
-      - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
-      - Execute Terraform init and apply
-        - It will take like 10-15 Minutes till everything is up
-      - If it fails most probably you need to activate CCE Access. Go to the OTC UI to the CCE which you created and press agree
-        ![cce-allow](./cce-allow-screenshot.png)
+    - Adjust variables.tf to your needs
+    - Add or remove some modules from main.tf if you like
+        - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
+        - Execute Terraform init and apply
+            - It will take like 10-15 Minutes till everything is up
+        - If it fails most probably you need to activate CCE Access. Go to the OTC UI to the CCE which you created and press agree
+          ![cce-allow](./cce-allow-screenshot.png)
 
 
 ## Try out if the cluster is available
 - execute inside your shell "source ./shell-helper.sh"
 - execute inside your shell "getKubectlConfig"
-  - Now you should have access to the kubernetes cluster
-  - try it out with "kubectl get nodes"
+    - Now you should have access to the kubernetes cluster
+    - try it out with "kubectl get nodes"
 - execute inside your shell "getElbPublicIp"
 - execute inside your shell "getElbId"
 

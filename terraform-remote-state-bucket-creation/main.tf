@@ -1,5 +1,5 @@
 terraform {
-  required_version = "v1.1.7"
+  required_version = "v1.3.4"
   required_providers {
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"

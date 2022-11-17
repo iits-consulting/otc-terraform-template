@@ -44,7 +44,7 @@ resource "kubernetes_namespace" "argocd" {
 
 module "argocd" {
   source  = "registry.terraform.io/iits-consulting/bootstrap/argocd"
-  version = "5.5.2"
+  version = "5.6.1"
 
   ## Common CRD collection Configuration, see https://github.com/iits-consulting/crds-chart
   custom_resource_definitions_enabled = true

@@ -2,7 +2,7 @@ data "opentelekomcloud_identity_project_v3" "current" {}
 
 module "terraform_secrets_from_encrypted_s3_bucket" {
   source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
-  version           = "5.0.0"
+  version           = "5.1.0"
   bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   required_secrets = [
@@ -42,31 +42,38 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
+module "crds" {
+  source  = "iits-consulting/crds/helm"
+  version = "0.0.2"
+}
+
+module "credentials" {
+  source                            = "iits-consulting/registry-credentials/helm"
+  version                           = "0.0.2"
+  registry_credentials_dockerconfig = local.dockerhubconfigjsonbase64
+  depends_on = [module.crds]
+}
+
 module "argocd" {
   source  = "registry.terraform.io/iits-consulting/bootstrap/argocd"
   version = "5.6.1"
 
-  ## Common CRD collection Configuration, see https://github.com/iits-consulting/crds-chart
-  custom_resource_definitions_enabled = true
-
-
-  ### Registry Credentials Configuration for auto inject docker pull secrets, see https://github.com/iits-consulting/registry-creds-chart
-  registry_credentials_enabled      = true
-  registry_credentials_dockerconfig = local.dockerhubconfigjsonbase64
+  custom_resource_definitions_enabled = false
+  registry_credentials_enabled        = false
 
   ### ArgoCD Configuration
   argocd_namespace                 = "argocd"
   argocd_project_name              = "infrastructure-charts"
-  argocd_git_access_token_username = "argo"
+  argocd_git_access_token_username = "argocd"
   argocd_git_access_token          = var.git_token
-  argocd_project_source_repo_url   = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
+  argocd_project_source_repo_url   = "https://github.com/iits-consulting/cloudastro-infrastructure-charts.git"
   argocd_project_source_path       = "stages/${var.stage}"
   argocd_application_values = {
     global = {
       stage = var.stage
       helmValues = [
         {
-          name = "dns.host"
+          name  = "dns.host"
           value = "admin.${var.domain_name}"
         }
       ]
@@ -80,4 +87,5 @@ module "argocd" {
       ]
     }
   }
+  depends_on = [module.credentials]
 }

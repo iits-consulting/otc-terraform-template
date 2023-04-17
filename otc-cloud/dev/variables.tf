@@ -62,3 +62,8 @@ locals {
     Context = var.context
   }
 }
+
+variable "os_domain_name" {
+  type        = string
+  description = "Current Cloud you are working on for example: OTC-EU-DE-000000000010...."
+}

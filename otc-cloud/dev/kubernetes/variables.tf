@@ -36,6 +36,11 @@ variable "git_token" {
   sensitive   = true
 }
 
+variable "argocd_bootstrap_project_url" {
+  type = string
+  description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
+}
+
 variable "domain_name" {
   type        = string
   description = "The public domain to create public DNS zone for."
@@ -44,4 +49,9 @@ variable "domain_name" {
 variable "email" {
   description = "E-mail contact address for DNS zone."
   type        = string
+}
+
+variable "os_domain_name" {
+  type        = string
+  description = "Current Cloud you are working on for example: OTC-EU-DE-000000000010...."
 }

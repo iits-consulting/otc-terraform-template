@@ -38,22 +38,14 @@ build
 .vscode/
 
 ### Helm ###
-telekom-cloud/charts/elk/charts/*.tgz
 /**/.terraform.tfstate.lock.info
+/temp/terraform.tfstate
 /**/terraform.tfstate
-/**/terraform.tfstate.d/dev/terraform.tfstate
-/**/terraform.tfstate.backup
+/**/.terraform.lock.hcl
+/temp/terraform.tfstate.backup
 /**/terraform.tfstate.d/dev/terraform.tfstate.backup
 /**/.terraform/plugins/linux_amd64/lock.json
 /**/.terraform/environment
 /**/terraform.tfvars
 /**/*.backup
-/**/cp-helm-charts
-
-**/charts/**/charts
 **/requirements.lock
-**/*.kube/*
-
-**/charts/**/Chart.lock
-**/Chart.lock
-**/charts/*.tgz

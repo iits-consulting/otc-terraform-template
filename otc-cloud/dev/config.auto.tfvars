@@ -13,7 +13,7 @@ cluster_config = {
   node_storage_type      = "SSD"
   node_storage_size      = 100
   nodes_count            = 2
-  nodes_max              = 2
+  nodes_max              = 8
   container_cidr         = "172.16.0.0/16"
   service_cidr           = "172.17.0.0/16"
 }

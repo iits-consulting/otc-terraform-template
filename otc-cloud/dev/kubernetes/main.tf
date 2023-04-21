@@ -54,34 +54,39 @@ module "credentials" {
   depends_on                        = [module.crds]
 }
 
-module "argocd" {
-  source  = "registry.terraform.io/iits-consulting/bootstrap/argocd"
-  version = "5.22.1"
-
-  ### ArgoCD Configuration
-  argocd_project_name              = "infrastructure-charts"
-  argocd_git_access_token_username = "ARGOCD_GIT_ACCESS_TOKEN"
-  argocd_git_access_token          = var.git_token
-  argocd_project_source_repo_url   = var.argocd_bootstrap_project_url
-  argocd_project_source_path       = "stages/${var.stage}"
-  argocd_application_values        = {
-    global = {
-      stage      = var.stage
-      helmValues = [
-        {
-          name  = "dns.host"
-          value = "admin.${var.domain_name}"
+resource "helm_release" "argocd" {
+  name                  = "argocd"
+  repository            = "https://victorgetz.github.io/common-infrastructure-charts"
+  chart                 = "argocd"
+  version               = "5.22.1-default-values"
+  namespace             = "argocd"
+  create_namespace      = true
+  wait                  = true
+  atomic                = true
+  timeout               = 900 // 15 Minutes
+  render_subchart_notes = true
+  dependency_update     = true
+  wait_for_jobs         = true
+  values                = [
+    yamlencode({
+      global = {
+        terraformValues = {
+          stage        = var.stage
+          traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+          dnsHost      = "admin.${var.domain_name}"
         }
-      ]
-    }
-    traefik = {
-      terraformValues = [
-        {
-          name  = "traefik.service.annotations.kubernetes\\.io\\/elb\\.id"
-          value = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+      }
+      projects = {
+        infrastructure = {
+          repoUrl         = var.argocd_bootstrap_project_url
+          allowedUrls     = ["https://victorgetz.github.io/common-infrastructure-charts"]
         }
-      ]
+        gitToken = {
+          password = var.git_token
+        }
+        repoPrivateKeyBase64Encoded = ""
+      }
     }
-  }
-  depends_on = [module.credentials]
+    )
+  ]
 }

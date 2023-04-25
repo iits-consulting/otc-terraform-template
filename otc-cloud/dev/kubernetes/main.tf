@@ -58,7 +58,7 @@ resource "helm_release" "argocd" {
   name                  = "argocd"
   repository            = "https://victorgetz.github.io/common-infrastructure-charts"
   chart                 = "argocd"
-  version               = "5.22.1-default-values"
+  version               = "5.22.1-projects"
   namespace             = "argocd"
   create_namespace      = true
   wait                  = true
@@ -69,22 +69,20 @@ resource "helm_release" "argocd" {
   wait_for_jobs         = true
   values                = [
     yamlencode({
-      global = {
-        terraformValues = {
-          stage        = var.stage
-          traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
-          dnsHost      = "admin.${var.domain_name}"
-        }
-      }
       projects = {
-        infrastructure = {
-          repoUrl         = var.argocd_bootstrap_project_url
-          allowedUrls     = ["https://victorgetz.github.io/common-infrastructure-charts"]
+        infrastructure-charts = {
+          projectValues = {
+            # Set this to enable stage $STAGE-values.yaml
+            stage        = var.stage
+            traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+            adminDomain  = "admin.${var.domain_name}"
+          }
+
+          git = {
+            password = var.git_token
+            repoUrl  = var.argocd_bootstrap_project_url
+          }
         }
-        gitToken = {
-          password = var.git_token
-        }
-        repoPrivateKeyBase64Encoded = ""
       }
     }
     )

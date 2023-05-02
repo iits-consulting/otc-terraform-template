@@ -19,15 +19,47 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
 }
 
 locals {
-  dockerhubconfigjsonbase64 = base64encode(jsonencode({
-    auths = {
-      "https://index.docker.io/v1/" = {
-        username = var.dockerhub_username
-        password = var.dockerhub_password
-        auth     = base64encode("${var.dockerhub_username}:${var.dockerhub_password}")
+  charts = {
+    registry_creds_version = "1.1.3"
+    crds_version           = "1.4.1"
+    argo_version           = "5.22.1-install-notes"
+  }
+}
+
+resource "helm_release" "custom_resource_definitions" {
+  name                  = "crds"
+  repository            = "https://charts.iits.tech"
+  chart                 = "crds"
+  version               = local.charts.crds_version
+  namespace             = "crds"
+  create_namespace      = true
+  render_subchart_notes = true
+  dependency_update     = true
+}
+
+resource "helm_release" "registry_credentials" {
+  depends_on = [helm_release.custom_resource_definitions]
+  name                  = "registry-creds"
+  repository            = "https://charts.iits.tech"
+  chart                 = "registry-creds"
+  version               = local.charts.registry_creds_version
+  namespace             = "registry-creds"
+  create_namespace      = true
+  atomic                = true
+  render_subchart_notes = true
+  dependency_update     = true
+  set_sensitive {
+    name  = "defaultClusterPullSecret.dockerConfigJsonBase64Encoded"
+    value = base64encode(jsonencode({
+      auths = {
+        "https://index.docker.io/v1/" = {
+          username = var.dockerhub_username
+          password = var.dockerhub_password
+          auth     = base64encode("${var.dockerhub_username}:${var.dockerhub_password}")
+        }
       }
-    }
-  }))
+    }))
+  }
 }
 
 resource "kubernetes_namespace" "argocd" {
@@ -42,23 +74,12 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-module "crds" {
-  source  = "iits-consulting/crds/helm"
-  version = "0.0.2"
-}
-
-module "credentials" {
-  source                            = "iits-consulting/registry-credentials/helm"
-  version                           = "0.0.2"
-  registry_credentials_dockerconfig = local.dockerhubconfigjsonbase64
-  depends_on                        = [module.crds]
-}
-
 resource "helm_release" "argocd" {
+  depends_on = [helm_release.custom_resource_definitions,helm_release.registry_credentials]
   name                  = "argocd"
-  repository            = "https://victorgetz.github.io/common-infrastructure-charts"
+  repository            = "https://charts.iits.tech"
   chart                 = "argocd"
-  version               = "5.22.1-projects"
+  version               = local.charts.argo_version
   namespace             = "argocd"
   create_namespace      = true
   wait                  = true

@@ -117,6 +117,6 @@ source shell-helper.sh
 argo
 ```
 
-## The End
+## Go over to Argo and deploy some services
 
-Congratulations you set up everything. To deploy some services please switch to **your fork** of the infrastructure project
+We are finished with the terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template

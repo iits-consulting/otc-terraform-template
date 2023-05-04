@@ -15,14 +15,15 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
     "client_key_data",
     "cce_id",
     "cce_name",
+    "storage_class_kms_key_id"
   ]
 }
 
 locals {
   charts = {
-    registry_creds_version = "1.1.3"
-    crds_version           = "1.4.1"
-    argo_version           = "5.22.1-install-notes"
+    registry_creds_version = "1.1.3-bugfix-user"
+    crds_version           = "1.5.0"
+    argo_version           = "5.30.1-seccompprofile-fix"
   }
 }
 
@@ -97,6 +98,7 @@ resource "helm_release" "argocd" {
             stage        = var.stage
             traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
             adminDomain  = "admin.${var.domain_name}"
+            storageClassKmsKeyId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["storage_class_kms_key_id"]
           }
 
           git = {

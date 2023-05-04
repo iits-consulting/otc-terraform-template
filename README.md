@@ -43,7 +43,12 @@ Here is what we want to achieve:
     * Click "Create User" in the top right corner
     * <img src="documentation/otc-create-user-1.png" style="width: 50%; height: 25%"/>
     * Save the password somewhere secure and use this user for the workshop
-7. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+7. Since we will encrypt all data and disks by default add the "KMS Administrator" role to your project
+    * Go to Identity and Access Management
+    * Go to Agencies
+    * Adjust EVSAccessKMS Agency like this
+      * ![kms-agency.png](documentation%2Fkms-agency.png)
+8. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * Set your context name under line number 2 (TF_VAR_context)
    * If you are not working under the region eu-de then please change line number 3 (TF_VAR_region)
    * replace all "REPLACE_ME" Placeholder with the correct values

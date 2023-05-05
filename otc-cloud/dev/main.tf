@@ -75,7 +75,6 @@ module "public_dns" {
   a_records = {
     (var.domain_name) = [module.loadbalancer.elb_public_ip]
     admin             = [module.loadbalancer.elb_public_ip]
-    kubernetes        = [split(":", trimprefix(module.cce.cluster_private_ip, "https://"))[0]]
   }
 }
 

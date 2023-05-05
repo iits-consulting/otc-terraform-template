@@ -19,7 +19,7 @@ Here is what we want to achieve:
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
 
 ## Preparation & Requirements
-1. Determine your Tenant Identification (for example OTC-EU-DE-00000000001000052376)
+1. Determine your Tenant Identification (for example OTC-EU-DE-0000000000100XXXXXXX)
     * Login into your OTC Tenant
     * On the right top corner you will find the tenant id
 2. Choose a unique context name. The context is an identifier to whom this setup belongs for example a department name, customer name ...

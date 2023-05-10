@@ -23,7 +23,7 @@ locals {
   charts = {
     registry_creds_version = "1.1.3-bugfix-user"
     crds_version           = "1.5.0"
-    argo_version           = "5.30.1-repo-server-fix"
+    argo_version           = "5.30.1-fix-proj-generation"
   }
 }
 

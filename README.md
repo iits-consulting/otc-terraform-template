@@ -21,16 +21,16 @@ Here is what we want to achieve:
 
 ## Preparation & Requirements
 1. Please go to this site: https://github.com/iits-consulting/otc-terraform-template and click on _Use this template_
-    * ![github-use-template.png](documentation%2Fgithub-use-template.png)
-    * Click on _Create a new repository_ and then select _Include all branches_ and _private repo_
-    * ![include-branches.png](documentation%2Finclude-branches.png)
+      ![github-use-template.png](documentation%2Fgithub-use-template.png)
+  * Click on _Create a new repository_ and then select _Include all branches_ and _private repo_
+  ![include-branches.png](documentation%2Finclude-branches.png)
 2. Next step is to do the same as in Step 1 with this project: https://github.com/iits-consulting/otc-infrastructure-charts-template
 3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
     * Click [here](https://github.com/settings/tokens?type=beta) to do that
     * Select _Only select repositories_ and choose your fork of the infrastructure-charts
     * The token should be able to see branches and pull from the repo
 4. You should have got an E-Mail with your credentials the format looks like this:
-    * ![credentials.png](documentation%2Fcredentials.png)
+   ![credentials.png](documentation%2Fcredentials.png)
 5. Login here: https://auth.otc.t-systems.com/authui/login.action and set a proper password
 6. Docker Account 
    * To avoid the [docker rate limit problem](https://docs.docker.com/docker-hub/download-rate-limit/#:~:text=Docker%20Hub%20limits%20the%20number,pulls%20per%206%20hour%20period) you need to create a docker.io account first or use your existing credentials/token. 
@@ -57,9 +57,6 @@ First thing we create is a remote OBS/S3 Bucket. Within this bucket we store the
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
        - It will take like 10-15 Minutes till everything is up
-   - If it fails most probably you need to activate CCE Access. Go to the OTC UI to the CCE which you created and press agree
-          
-      ![cce-allow](documentation/cce-allow-screenshot.png)
 
 ## Validate your setup is up and running
   * Check Kubernetes

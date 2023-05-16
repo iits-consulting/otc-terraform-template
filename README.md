@@ -29,7 +29,8 @@ Here is what we want to achieve:
     * Click [here](https://github.com/settings/tokens?type=beta) to do that
     * Select _Only select repositories_ and choose your fork of the infrastructure-charts
     * The token should be able to see branches and pull from the repo
-4. You should have got an E-Mail with your credentials the format looks like this:
+4. You should have got an E-Mail with your credentials the format looks like this
+
    ![credentials.png](documentation%2Fcredentials.png)
 5. Login here: https://auth.otc.t-systems.com/authui/login.action and set a proper password
 6. Docker Account 
@@ -61,9 +62,7 @@ First thing we create is a remote OBS/S3 Bucket. Within this bucket we store the
 ## Validate your setup is up and running
   * Check Kubernetes
     * source the file otc-cloud/dev/stage-dependent-env.sh
-    * the output should look like this:
-    
-      ![kubect-fetched.png](documentation%2Fkubect-fetched.png)
+    * the output should look like this:![kubect-fetched.png](documentation%2Fkubect-fetched.png)
     
     * execute inside your cli the following command:
       ```shell

@@ -62,7 +62,9 @@ First thing we create is a remote OBS/S3 Bucket. Within this bucket we store the
   * Check Kubernetes
     * source the file otc-cloud/dev/stage-dependent-env.sh
     * the output should look like this:
+    
       ![kubect-fetched.png](documentation%2Fkubect-fetched.png)
+    
     * execute inside your cli the following command:
       ```shell
       kubectl get nodes

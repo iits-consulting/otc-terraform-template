@@ -22,11 +22,9 @@ Here is what we want to achieve:
 ## Preparation & Requirements
 1. Please go to this site: https://github.com/iits-consulting/otc-terraform-template and click on _Use this template_
     * ![github-use-template.png](documentation%2Fgithub-use-template.png)
-    * Click on _Create a new repository_ and then select _Include all branches_
-    * Choose private repo
+    * Click on _Create a new repository_ and then select _Include all branches_ and _private repo_
     * ![include-branches.png](documentation%2Finclude-branches.png)
 2. Next step is to do the same as in Step 1 with this project: https://github.com/iits-consulting/otc-infrastructure-charts-template
-    * Choose private repo
 3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
     * Click [here](https://github.com/settings/tokens?type=beta) to do that
     * Select _Only select repositories_ and choose your fork of the infrastructure-charts

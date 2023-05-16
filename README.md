@@ -17,40 +17,27 @@ Here is what we want to achieve:
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
+* Github Account
 
 ## Preparation & Requirements
-1. Determine your Tenant Identification (for example OTC-EU-DE-0000000000100XXXXXXX)
-    * Login into your OTC Tenant
-    * On the right top corner you will find the tenant id
-2. Choose a unique context name. The context is an identifier to whom this setup belongs for example a department name, customer name ...
-   Please don't use spaces or any special characters.
-3. Connect a subdomain to OTC
-    * Since we want to expose our setup through DNS we need to create a subdomain and connect it to your OTC Project. For that you need to do the following:
-      * Create a NS record inside your domain provider for {contextname}.my-domain.de with the following values
-        * ns1.open-telekom-cloud.com
-        * ns2.open-telekom-cloud.com
-4. Docker Account 
+1. Please go to this site: https://github.com/iits-consulting/otc-terraform-template and click on _Use this template_
+    * ![github-use-template.png](documentation%2Fgithub-use-template.png)
+    * Click on _Create a new repository_ and then select _Include all branches_
+    * Choose private repo
+    * ![include-branches.png](documentation%2Finclude-branches.png)
+2. Next step is to do the same as in Step 1 with this project: https://github.com/iits-consulting/otc-infrastructure-charts-template
+    * Choose private repo
+3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
+    * Click [here](https://github.com/settings/tokens?type=beta) to do that
+    * Select _Only select repositories_ and choose your fork of the infrastructure-charts
+    * The token should be able to see branches and pull from the repo
+4. You should have got an E-Mail with your credentials the format looks like this:
+    * ![credentials.png](documentation%2Fcredentials.png)
+5. Login here: https://auth.otc.t-systems.com/authui/login.action and set a proper password
+6. Docker Account 
    * To avoid the [docker rate limit problem](https://docs.docker.com/docker-hub/download-rate-limit/#:~:text=Docker%20Hub%20limits%20the%20number,pulls%20per%206%20hour%20period) you need to create a docker.io account first or use your existing credentials/token. 
        If you don't have a docker account you can create a free one [here](https://hub.docker.com/signup/)
-5. Access token **to your Fork** of the git repository  [otc-infrastructure-charts-template project](https://github.com/iits-consulting/otc-infrastructure-charts-template). It is needed for ArgoCD to be able to pull informations from there
-    * Click [here](https://github.com/settings/tokens?type=beta) if you use Github
-    * If you use Gitlab you can go to your project and then create a token here:
-    * 
-      <img src="documentation/gitlab-token.png" style="width: 50%; height: 25%"/>
-6. Create a user for this workshop inside your OTC Tenant
-    * Login with your account into OTC
-    * Go to Identity and Access Management
-    * Click "Create User" in the top right corner
-    * <img src="documentation/otc-create-user-1.png" style="width: 50%; height: 25%"/>
-    * Save the password somewhere secure and use this user for the workshop
-7. Since we will encrypt all data and disks by default add the "KMS Administrator" role to your project
-    * Go to Identity and Access Management
-    * Go to Agencies
-    * Adjust EVSAccessKMS Agency like this
-      * ![kms-agency.png](documentation%2Fkms-agency.png)
-8. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
-   * Set your context name under line number 2 (TF_VAR_context)
-   * If you are not working under the region eu-de then please change line number 3 (TF_VAR_region)
+7. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 

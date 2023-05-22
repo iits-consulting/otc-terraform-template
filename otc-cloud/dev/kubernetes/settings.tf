@@ -4,10 +4,11 @@ terraform {
   backend "s3" {
     //TODO
   }
+
   required_providers {
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
-      version = ">=1.32.4"
+      version = ">=1.34.4"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"

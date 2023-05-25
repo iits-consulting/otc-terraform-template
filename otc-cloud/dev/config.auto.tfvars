@@ -8,7 +8,6 @@ cluster_config = {
   enable_scaling         = true
   high_availability      = false
   container_network_type = "overlay_l2"
-  service_cidr           = "172.17.0.0/16"
   node_flavor            = "s3.xlarge.4"
   node_storage_type      = "SSD"
   node_storage_size      = 100

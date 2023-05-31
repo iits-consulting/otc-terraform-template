@@ -17,6 +17,7 @@ Here is what we want to achieve:
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
+* [jq](https://jqlang.github.io/jq/download/)
 * Github Account
 
 ## Preparation & Requirements

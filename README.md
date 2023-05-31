@@ -18,6 +18,7 @@ Here is what we want to achieve:
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
 * [jq](https://jqlang.github.io/jq/download/)
+* git
 * Github Account
 
 ## Preparation & Requirements

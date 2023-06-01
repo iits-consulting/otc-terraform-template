@@ -7,7 +7,20 @@ A similar Approach also applies to FluxCD.
 
 Here is what we want to achieve:
 
-<img src="documentation/big-picture.png" style="width: 60%; height: 30%"/>
+
+![big-picture.png](documentation%2Fbig-picture.png)
+
+
+
+![admin-dashboard.png](documentation%2Fadmin-dashboard.png)
+
+The following services we will deploy later
+* Admin Dashboard
+* Basic Auth Gateway
+* Storage Classes
+* Elastic Stack (kibana/elasticsearch/filebeat)
+* Kyverno
+* 
 
 **Please keep in mind this workshop just teaches the basics. For a proper and secure production setup please contact us at kontakt@iits-consulting.de**
 

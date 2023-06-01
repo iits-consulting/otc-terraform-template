@@ -48,8 +48,8 @@ output "backend_config" {
 
       backend "s3" {
         bucket = "${opentelekomcloud_obs_bucket.tf_remote_state.bucket}"
-        kms_key_id = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].sse_kms_key_id}
-        key = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].key}
+        kms_key_id = "${opentelekomcloud_s3_bucket_object.state_files["infrastructure"].sse_kms_key_id}"
+        key = "${opentelekomcloud_s3_bucket_object.state_files["infrastructure"].key}"
         region = "${opentelekomcloud_obs_bucket.tf_remote_state.region}"
         endpoint = "obs.${var.region}.otc.t-systems.com"
         encrypt = true
@@ -61,8 +61,8 @@ output "backend_config" {
 
       backend "s3" {
         bucket = "${opentelekomcloud_obs_bucket.tf_remote_state.bucket}"
-        kms_key_id = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].sse_kms_key_id}
-        key = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].key}
+        kms_key_id = "${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].sse_kms_key_id}"
+        key = "${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].key}"
         region = "${opentelekomcloud_obs_bucket.tf_remote_state.region}"
         endpoint = "obs.${var.region}.otc.t-systems.com"
         encrypt = true

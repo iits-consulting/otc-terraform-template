@@ -1,5 +1,15 @@
 locals {
   bucket_name = "${var.region}-${var.context}-${var.stage}-tfstate"
+  statefiles  = tomap({
+    infrastructure = {
+      fileName     = "tfstate-infrastructure"
+      settingsPath = "otc-cloud/${var.stage}/settings.tf"
+    },
+    kubernetes = {
+      fileName     = "tfstate-kubernetes"
+      settingsPath = "otc-cloud/${var.stage}/kubernetes/settings.tf"
+    }
+  })
 }
 
 resource "opentelekomcloud_obs_bucket" "tf_remote_state" {
@@ -23,14 +33,23 @@ resource "opentelekomcloud_kms_key_v1" "tf_remote_state_bucket_kms_key" {
   is_enabled      = "true"
 }
 
+resource "opentelekomcloud_s3_bucket_object" "state_files" {
+  for_each     = local.statefiles
+  bucket       = opentelekomcloud_obs_bucket.tf_remote_state.bucket
+  key          = each.value.fileName
+  source       = "empty_tfstate"
+  content_type = "application/json;charset=UTF-8"
+}
+
 output "backend_config" {
   value = <<EOT
-    Put this under otc-cloud/${var.stage}/settings.tf under TODO !
+
+      Put this under otc-cloud/${var.stage}/settings.tf under TODO !
 
       backend "s3" {
         bucket = "${opentelekomcloud_obs_bucket.tf_remote_state.bucket}"
-        kms_key_id = "arn:aws:kms:${var.region}:${opentelekomcloud_kms_key_v1.tf_remote_state_bucket_kms_key.domain_id}:key/${opentelekomcloud_kms_key_v1.tf_remote_state_bucket_kms_key.id}"
-        key = "tfstate"
+        kms_key_id = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].sse_kms_key_id}
+        key = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].key}
         region = "${opentelekomcloud_obs_bucket.tf_remote_state.region}"
         endpoint = "obs.${var.region}.otc.t-systems.com"
         encrypt = true
@@ -38,12 +57,12 @@ output "backend_config" {
         skip_credentials_validation = true
       }
 
-    Put this under otc-cloud/${var.stage}/kubernetes/settings.tf under TODO !
+      Put this under otc-cloud/${var.stage}/kubernetes/settings.tf under TODO !
 
       backend "s3" {
         bucket = "${opentelekomcloud_obs_bucket.tf_remote_state.bucket}"
-        kms_key_id = "arn:aws:kms:${var.region}:${opentelekomcloud_kms_key_v1.tf_remote_state_bucket_kms_key.domain_id}:key/${opentelekomcloud_kms_key_v1.tf_remote_state_bucket_kms_key.id}"
-        key = "tfstate-kubernetes"
+        kms_key_id = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].sse_kms_key_id}
+        key = ${opentelekomcloud_s3_bucket_object.state_files["kubernetes"].key}
         region = "${opentelekomcloud_obs_bucket.tf_remote_state.region}"
         endpoint = "obs.${var.region}.otc.t-systems.com"
         encrypt = true

@@ -70,6 +70,14 @@ variable "git_token" {
 variable "argocd_bootstrap_project_url" {
   type        = string
   description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
+  validation {
+    condition     = !can(regex("iits-consulting",var.argocd_bootstrap_project_url))
+    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use your fork and not the iits-consulting repo"
+  }
+  validation {
+    condition     =  can(regex("https://github.com", var.argocd_bootstrap_project_url))
+    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use the https link from you fork"
+  }
 }
 
 variable "domain_name" {

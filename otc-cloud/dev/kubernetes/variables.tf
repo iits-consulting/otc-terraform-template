@@ -23,9 +23,9 @@ locals {
   charts = {
     registry_creds_version        = "1.1.3-bugfix-user"
     crds_version                  = "1.5.0"
-    argo_version                  = "5.30.1-fix-proj-generation"
-    kyverno_version               = "1.0.1"
-    iits_kyverno_policies_version = "1.3.0"
+    argo_version                  = "5.30.1-add-helm-registries"
+    kyverno_version               = "1.2.0"
+    iits_kyverno_policies_version = "1.4.4"
   }
 }
 

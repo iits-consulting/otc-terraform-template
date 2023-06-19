@@ -25,7 +25,7 @@ locals {
     crds_version                  = "1.5.0"
     argo_version                  = "5.30.1-add-helm-registries"
     kyverno_version               = "1.2.0"
-    iits_kyverno_policies_version = "1.4.4"
+    iits_kyverno_policies_version = "1.4.5"
   }
 }
 

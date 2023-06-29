@@ -1,5 +1,3 @@
-data "opentelekomcloud_identity_project_v3" "current" {}
-
 module "vpc" {
   source             = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/vpc"
   version            = "5.3.0"
@@ -93,7 +91,7 @@ module "encyrpted_secrets_bucket" {
   providers         = { opentelekomcloud = opentelekomcloud.top_level_project }
   source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_writer"
   version           = "5.3.0"
-  bucket_name       = replace(lower("${data.opentelekomcloud_identity_project_v3.current.name}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
+  bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   secrets           = {
     elb_id                   = module.loadbalancer.elb_id

@@ -13,17 +13,16 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
     "client_key_data",
     "cce_id",
     "cce_name",
-    "storage_class_kms_key_id"
   ]
 }
 
 locals {
-  charts = {
-    registry_creds_version        = "1.1.3-bugfix-user"
-    crds_version                  = "1.5.0"
-    argo_version                  = "5.30.1-add-helm-registries"
-    kyverno_version               = "1.2.0"
-    iits_kyverno_policies_version = "1.4.5"
+  chart_versions = {
+    otc_storage_classes   = "2.0.0"
+    crds                  = "1.5.0"
+    argo                  = "5.30.1-add-helm-registries"
+    kyverno               = "1.2.1"
+    iits_kyverno_policies = "1.5.0"
   }
 }
 

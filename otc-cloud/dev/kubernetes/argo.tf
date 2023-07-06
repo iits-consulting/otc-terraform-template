@@ -11,11 +11,13 @@ resource "kubernetes_namespace" "argocd" {
 }
 
 resource "helm_release" "argocd" {
-  depends_on            = [helm_release.custom_resource_definitions, helm_release.registry_credentials, helm_release.iits_kyverno_policies]
+  depends_on = [
+    helm_release.custom_resource_definitions, helm_release.otc_storage_classes, helm_release.iits_kyverno_policies
+  ]
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
   chart                 = "argocd"
-  version               = local.charts.argo_version
+  version               = local.chart_versions.argo
   namespace             = "argocd"
   create_namespace      = true
   wait                  = true
@@ -30,12 +32,10 @@ resource "helm_release" "argocd" {
         infrastructure-charts = {
           projectValues = {
             # Set this to enable stage $STAGE-values.yaml
-            stage                = var.stage
-            traefikElbId         = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
-            adminDomain          = "admin.${var.domain_name}"
-            storageClassKmsKeyId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["storage_class_kms_key_id"]
+            stage        = var.stage
+            traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+            rootDomain   = var.domain_name
           }
-
           git = {
             password = var.git_token
             repoUrl  = var.argocd_bootstrap_project_url

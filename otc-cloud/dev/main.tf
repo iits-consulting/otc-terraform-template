@@ -76,17 +76,6 @@ module "public_dns" {
   }
 }
 
-resource "random_id" "storage_class_kms_id" {
-  byte_length = 4
-}
-
-resource "opentelekomcloud_kms_key_v1" "storage_class_kms_key" {
-  key_alias       = "${module.cce.cluster_name}-pv-key-${random_id.storage_class_kms_id.hex}"
-  key_description = "${module.cce.cluster_name}-cluster persistent volume encryption key"
-  pending_days    = 7
-  is_enabled      = "true"
-}
-
 module "encyrpted_secrets_bucket" {
   providers         = { opentelekomcloud = opentelekomcloud.top_level_project }
   source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_writer"
@@ -103,7 +92,6 @@ module "encyrpted_secrets_bucket" {
     client_key_data          = module.cce.cluster_credentials.client_key_data
     cce_id                   = module.cce.cluster_id
     cce_name                 = module.cce.cluster_name
-    storage_class_kms_key_id = opentelekomcloud_kms_key_v1.storage_class_kms_key.id
   }
   tags = local.tags
 }

@@ -18,7 +18,7 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
 
 locals {
   chart_versions = {
-    otc_storage_classes   = "2.0.0"
+    otc_storage_classes   = "2.0.2"
     crds                  = "1.5.0"
     argo                  = "5.30.1-add-helm-registries"
     kyverno               = "1.2.1"

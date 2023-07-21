@@ -1,5 +1,5 @@
 terraform {
-  required_version = "v1.3.5"
+  required_version = ">=v1.3.5"
 
   backend "s3" {
     //TODO
@@ -12,7 +12,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.10.0"
+      version = "2.16.0"
     }
     helm = {
       source = "hashicorp/helm"

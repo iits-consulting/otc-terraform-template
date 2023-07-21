@@ -49,3 +49,5 @@ build
 /**/terraform.tfvars
 /**/*.backup
 **/requirements.lock
+
+./my-secrets.sh

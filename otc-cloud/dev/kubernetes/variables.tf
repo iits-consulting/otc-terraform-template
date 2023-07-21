@@ -20,7 +20,7 @@ locals {
   chart_versions = {
     otc_storage_classes   = "2.0.2"
     crds                  = "1.5.0"
-    argo                  = "5.30.1-add-helm-registries"
+    argo                  = "15.0.1"
     kyverno               = "1.2.1"
     iits_kyverno_policies = "1.5.0"
   }

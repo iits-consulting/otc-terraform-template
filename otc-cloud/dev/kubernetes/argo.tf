@@ -10,6 +10,11 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
+resource "random_password" "basic_auth_password" {
+  length = 32
+  special = true
+}
+
 resource "helm_release" "argocd" {
   depends_on = [
     helm_release.custom_resource_definitions, helm_release.otc_storage_classes, helm_release.iits_kyverno_policies
@@ -35,6 +40,7 @@ resource "helm_release" "argocd" {
             stage        = var.stage
             traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
             rootDomain   = var.domain_name
+            basicAuthPassword = random_password.basic_auth_password.result
           }
           git = {
             password = var.git_token
@@ -45,4 +51,9 @@ resource "helm_release" "argocd" {
     }
     )
   ]
+}
+
+resource "local_file" "basic_auth_password" {
+  filename = "basic-auth-password.txt"
+  content = "The basic auth credentials for the admin domain are username=admin and password=${random_password.basic_auth_password.result}"
 }

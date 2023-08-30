@@ -5,11 +5,12 @@
 During this Workshop/Blueprint you will learn the basics about proper automation of infrastructere and how to bootstrap ArgoCD.
 A similar Approach also applies to FluxCD.
 
+If you want to use this setup without attending our workshop please do first the following step
+
 Here is what we want to achieve:
 
 
 ![big-picture.png](documentation%2Fbig-picture.png)
-
 
 
 ![admin-dashboard.png](documentation%2Fadmin-dashboard.png)
@@ -20,26 +21,28 @@ The following services we will deploy later
 * Storage Classes
 * Elastic Stack (kibana/elasticsearch/filebeat)
 * Kyverno
-* 
 
 **Please keep in mind this workshop just teaches the basics. For a proper and secure production setup please contact us at kontakt@iits-consulting.de**
 
 ## Tools Requirements
 
-* Install Terraform in the Version 1.3.5. We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
+* Install Terraform in the Version 1.4.6 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
-* [jq](https://jqlang.github.io/jq/download/)
 * git
 * Github Account
 
 ## Preparation & Requirements
-1. Please go to this site: https://github.com/iits-consulting/otc-terraform-template and click on _Use this template_
-      ![github-use-template.png](documentation%2Fgithub-use-template.png)
-  * Click on _Create a new repository_ and then select _Include all branches_ and _private repo_
-  ![include-branches.png](documentation%2Finclude-branches.png)
-2. Next step is to do the same as in Step 1 with this project: https://github.com/iits-consulting/otc-infrastructure-charts-template
+1. First we will pull the Terraform sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template
+      ![clone-otc-terraform-template.png](documentation%2Fclone-otc-terraform-template.png)
+  * Click on _Code_
+  * Clone the repository 
+2. Next step is to create a fork for the ArgoCD project. Please go to this link: https://github.com/iits-consulting/otc-infrastructure-charts-template
+  * Click on _Use this template_
+  * Click on _Create a new repository_ 
+    * choose a repository name 
+    * select _Private_ repository
 3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
     * Click [here](https://github.com/settings/tokens?type=beta) to do that
     * Select _Only select repositories_ and choose your fork of the infrastructure-charts
@@ -47,11 +50,10 @@ The following services we will deploy later
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)
-5. Login here: https://auth.otc.t-systems.com/authui/login.action and set a proper password
-6. Docker Account 
+5. Docker Account 
    * To avoid the [docker rate limit problem](https://docs.docker.com/docker-hub/download-rate-limit/#:~:text=Docker%20Hub%20limits%20the%20number,pulls%20per%206%20hour%20period) you need to create a docker.io account first or use your existing credentials/token. 
        If you don't have a docker account you can create a free one [here](https://hub.docker.com/signup/)
-7. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+6. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 
@@ -95,7 +97,7 @@ Congrats your infrastructure is working properly
 ## Bootstrap ArgoCD
 
 Now we want to bring some life into our cluster. 
-For that we will deploy everything from our Fork from the _Preparation & Requirements Step 5_
+For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
 - Go into the folder ./otc-cloud/dev/kubernetes
 - Take a look at the _main.tf_ and try to understand what we want to achieve
@@ -126,3 +128,21 @@ Inside this file you will find the credentials to be able to access your page.
 ## Go over to Argo and deploy some services
 
 We are finished with the terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
+
+
+## Do the workshop on your tenant
+
+If you want to do the workshop on your tenant you need to create a user first and configure the IAM. 
+
+Please do the following steps:
+
+1. Login into the OTC UI
+2. Go to _IAM_
+3. Create a new project for the workshop
+4. Create a user and assign it the admin role
+    * You will need the username & password
+5. Go to _Agencies_ ![agencies.png](documentation%2Fagencies.png)
+6. For _EVSAccessKMS_ click on _Authorize_
+   * Add _KMS Administrator_ for _All resources_
+7. For _cce_admin_trust_ click on _Authorize_
+    * Add _Tenant Administrator (Exclude IAM)_ for _All resources_

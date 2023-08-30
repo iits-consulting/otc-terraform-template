@@ -1,5 +1,6 @@
 provider "opentelekomcloud" {
-  cloud = "${var.os_domain_name}_${var.region}_${var.context}"
+  auth_url    = "https://iam.${var.region}.otc.t-systems.com/v3"
+  security_token = var.ak_sk_security_token
 }
 
 provider "kubernetes" {

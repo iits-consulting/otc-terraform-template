@@ -46,7 +46,9 @@ The following services we will deploy later
 3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
     * Click [here](https://github.com/settings/tokens?type=beta) to do that
     * Select _Only select repositories_ and choose your fork of the infrastructure-charts
-    * The token should be able to see branches and pull from the repo
+    * Permissions
+      * Contents -> Read-Only
+      * Commit Status -> Read-Only
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)

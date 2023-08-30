@@ -95,3 +95,10 @@ module "encyrpted_secrets_bucket" {
   }
   tags = local.tags
 }
+
+resource "null_resource" "get_kube_config" {
+  depends_on = [module.cce]
+  provisioner "local-exec" {
+    command = "./stage-dependent-env.sh"
+  }
+}

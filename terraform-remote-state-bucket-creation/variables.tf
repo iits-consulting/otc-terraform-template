@@ -22,3 +22,8 @@ variable "region" {
     error_message = "Allowed values for region are \"eu-de\" and \"eu-nl\"."
   }
 }
+
+variable "ak_sk_security_token" {
+  type = string
+  description = "Security Token for temporary AK/SK"
+}

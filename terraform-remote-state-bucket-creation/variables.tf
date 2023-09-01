@@ -24,6 +24,6 @@ variable "region" {
 }
 
 variable "ak_sk_security_token" {
-  type = string
+  type        = string
   description = "Security Token for temporary AK/SK"
 }

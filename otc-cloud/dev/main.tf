@@ -4,10 +4,7 @@ module "vpc" {
   name               = "${var.context}-${var.stage}-vpc"
   cidr_block         = var.vpc_cidr
   enable_shared_snat = false
-  subnets            = {
-    "kubernetes-subnet" = cidrsubnet(var.vpc_cidr, 1, 0)
-  }
-  tags = local.tags
+  tags               = local.tags
 }
 
 module "snat" {
@@ -20,8 +17,8 @@ module "snat" {
 }
 
 module "cce" {
-  source      = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version     = "5.3.0"
+  source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
+  version = "5.3.0"
 
   name                           = "${var.context}-${var.stage}"
   cluster_vpc_id                 = module.vpc.vpc.id
@@ -56,9 +53,9 @@ module "loadbalancer" {
 }
 
 module "private_dns" {
-  source    = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
-  version   = "5.3.0"
-  domain    = "vpc.private"
+  source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
+  version = "5.3.0"
+  domain  = "vpc.private"
   a_records = {
     kubernetes = [split(":", trimprefix(module.cce.cluster_private_ip, "https://"))[0]]
   }
@@ -66,10 +63,10 @@ module "private_dns" {
 }
 
 module "public_dns" {
-  source    = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
-  version   = "5.3.0"
-  domain    = var.domain_name
-  email     = var.email
+  source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
+  version = "5.3.0"
+  domain  = var.domain_name
+  email   = var.email
   a_records = {
     (var.domain_name) = [module.loadbalancer.elb_public_ip]
     admin             = [module.loadbalancer.elb_public_ip]
@@ -82,16 +79,16 @@ module "encyrpted_secrets_bucket" {
   version           = "5.3.0"
   bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
-  secrets           = {
-    elb_id                   = module.loadbalancer.elb_id
-    elb_public_ip            = module.loadbalancer.elb_public_ip
-    kubectl_config           = module.cce.kubeconfig
-    kubernetes_ca_cert       = module.cce.cluster_credentials.cluster_certificate_authority_data
-    client_certificate_data  = module.cce.cluster_credentials.client_certificate_data
-    kube_api_endpoint        = module.cce.cluster_credentials.kubectl_external_server
-    client_key_data          = module.cce.cluster_credentials.client_key_data
-    cce_id                   = module.cce.cluster_id
-    cce_name                 = module.cce.cluster_name
+  secrets = {
+    elb_id                  = module.loadbalancer.elb_id
+    elb_public_ip           = module.loadbalancer.elb_public_ip
+    kubectl_config          = module.cce.kubeconfig
+    kubernetes_ca_cert      = module.cce.cluster_credentials.cluster_certificate_authority_data
+    client_certificate_data = module.cce.cluster_credentials.client_certificate_data
+    kube_api_endpoint       = module.cce.cluster_credentials.kubectl_external_server
+    client_key_data         = module.cce.cluster_credentials.client_key_data
+    cce_id                  = module.cce.cluster_id
+    cce_name                = module.cce.cluster_name
   }
   tags = local.tags
 }

@@ -1,5 +1,5 @@
 resource "helm_release" "kyverno" {
-  depends_on = [helm_release.custom_resource_definitions]
+  depends_on            = [helm_release.custom_resource_definitions]
   name                  = "kyverno"
   repository            = "https://charts.iits.tech"
   version               = local.chart_versions.kyverno
@@ -14,7 +14,7 @@ resource "helm_release" "kyverno" {
   wait_for_jobs         = true
   skip_crds             = false
   # The entrypoint to your cluster highly depends on your local setup
-  values                = [
+  values = [
     yamlencode({
       ingressRoute = {
         enabled     = true
@@ -38,7 +38,7 @@ resource "helm_release" "iits_kyverno_policies" {
   timeout               = 900 // 15 Minutes
   render_subchart_notes = true
   dependency_update     = true
-  values                = sensitive([yamlencode({
+  values = sensitive([yamlencode({
     autoInjectDockerPullSecrets = {
       enabled = true
       secrets = {

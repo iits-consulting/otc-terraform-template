@@ -1,6 +1,6 @@
 locals {
   bucket_name = "${var.region}-${var.context}-${var.stage}-tfstate"
-  statefiles  = tomap({
+  statefiles = tomap({
     infrastructure = {
       fileName     = "tfstate-infrastructure"
       settingsPath = "otc-cloud/${var.stage}/settings.tf"

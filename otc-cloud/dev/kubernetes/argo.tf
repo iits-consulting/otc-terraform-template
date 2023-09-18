@@ -3,7 +3,7 @@ resource "kubernetes_namespace" "argocd" {
     annotations = {
       optimized-by-cce = true
     }
-    name   = "argocd"
+    name = "argocd"
     labels = {
       name = "argocd"
     }
@@ -11,7 +11,7 @@ resource "kubernetes_namespace" "argocd" {
 }
 
 resource "random_password" "basic_auth_password" {
-  length = 32
+  length  = 32
   special = true
 }
 
@@ -31,15 +31,15 @@ resource "helm_release" "argocd" {
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
-  values                = [
+  values = [
     yamlencode({
       projects = {
         infrastructure-charts = {
           projectValues = {
             # Set this to enable stage $STAGE-values.yaml
-            stage        = var.stage
-            traefikElbId = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
-            rootDomain   = var.domain_name
+            stage             = var.stage
+            traefikElbId      = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+            rootDomain        = var.domain_name
             basicAuthPassword = random_password.basic_auth_password.result
           }
           git = {
@@ -48,12 +48,12 @@ resource "helm_release" "argocd" {
           }
         }
       }
-    }
+      }
     )
   ]
 }
 
 resource "local_file" "basic_auth_password" {
   filename = "basic-auth-password.txt"
-  content = "The basic auth credentials for the admin domain are username=admin and password=${random_password.basic_auth_password.result}"
+  content  = "The basic auth credentials for the admin domain are username=admin and password=${random_password.basic_auth_password.result}"
 }

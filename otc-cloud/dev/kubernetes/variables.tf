@@ -3,7 +3,7 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
   version           = "5.1.0"
   bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
-  required_secrets = [
+  required_secrets  = [
     "elb_id",
     "elb_public_ip",
     "kubectl_config",
@@ -68,11 +68,11 @@ variable "argocd_bootstrap_project_url" {
   type        = string
   description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
   validation {
-    condition     = !can(regex("iits-consulting", var.argocd_bootstrap_project_url))
+    condition     = !can(regex("iits-consulting",var.argocd_bootstrap_project_url))
     error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use your fork and not the iits-consulting repo"
   }
   validation {
-    condition     = can(regex("https://github.com", var.argocd_bootstrap_project_url))
+    condition     =  can(regex("https://github.com", var.argocd_bootstrap_project_url))
     error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use the https link from you fork"
   }
 }
@@ -93,6 +93,6 @@ variable "os_domain_name" {
 }
 
 variable "ak_sk_security_token" {
-  type        = string
+  type = string
   description = "Security Token for temporary AK/SK"
 }

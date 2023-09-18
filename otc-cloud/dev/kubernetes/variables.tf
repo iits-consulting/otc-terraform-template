@@ -1,6 +1,6 @@
 module "terraform_secrets_from_encrypted_s3_bucket" {
   source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
-  version           = "5.1.0"
+  version           = "5.5.0"
   bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
   bucket_object_key = "terraform-secrets"
   required_secrets = [

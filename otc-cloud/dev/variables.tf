@@ -63,11 +63,6 @@ locals {
   }
 }
 
-variable "os_domain_name" {
-  type        = string
-  description = "Current Cloud you are working on for example: OTC-EU-DE-000000000010...."
-}
-
 variable "ak_sk_security_token" {
   type        = string
   description = "Security Token for temporary AK/SK"

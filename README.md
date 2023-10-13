@@ -55,7 +55,7 @@ The following services we will deploy later
 5. Docker Account 
    * To avoid the [docker rate limit problem](https://docs.docker.com/docker-hub/download-rate-limit/#:~:text=Docker%20Hub%20limits%20the%20number,pulls%20per%206%20hour%20period) you need to create a docker.io account first or use your existing credentials/token. 
        If you don't have a docker account you can create a free one [here](https://hub.docker.com/signup/)
-6. Adjust the .envrc file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+6. Adjust the .envrc and my-secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 

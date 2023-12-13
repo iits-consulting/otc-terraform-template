@@ -59,20 +59,36 @@ The following services we will deploy later
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 
-
-## Create a remote state bucket
-
-First thing we create is a remote OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
-
-1. Go to the folder _terraform-remote-state-bucket-creation_ and execute terraform init and apply
-2. The output from terraform should look like this: ![terraform-output-remote-state.png](documentation%2Fterraform-output-remote-state.png)
-3. Add the remote state configuration under:
-    - ./otc-cloud/dev/settings.tf
-    - ./otc-cloud/dev/kubernetes/settings.tf
-
 ## Create the kubernetes cluster and other infrastructure components
-1. Go into the folder otc-cloud/dev
-    - Take a look at the main.tf and try to understand what we want to set up
+
+First go into the folder otc-cloud/dev
+
+### Create Terraform state bucket
+
+To be able to store the state of terraform somewhere secure, we need first to create a remote tfstate backend.
+THe remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
+
+2. Execute 
+      ```shell
+      terraform init
+      ```
+3. Execute
+      ```shell
+      terraform apply --target module.tf_state_bucket --auto-approve
+      ```
+4. Wait for completion
+5. After completion we should get a output which looks like this:
+   ![terraform-output-remote-state.png](documentation%2Fterraform-output-remote-state.png)
+6. Copy the output and replace inside the settings.tf file the commented out section of the backend with the output
+7. Execute this command
+      ```shell
+   terraform init
+      ```
+8. Type _yes_ and enter
+9. remove the files _terraform.tfstate_ and _terraform.tfstate.backup_
+
+## Execute Terraform
+1. Now take a look at the main.tf and try to understand what we want to set up
     - (Optional) Add or remove some modules from main.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
@@ -100,11 +116,10 @@ Now we want to bring some life into our cluster.
 For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
 - Go into the folder ./otc-cloud/dev/kubernetes
+- Repeat the steps from this point again [here](#create-terraform-state-bucket)
 - Take a look at the _argo.tf_ and try to understand what we want to achieve
 - Execute Terraform init and apply
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
-
-
 
 ## Access ArgoCD UI
 

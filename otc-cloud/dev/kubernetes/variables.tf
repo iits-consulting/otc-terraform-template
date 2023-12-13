@@ -19,7 +19,7 @@ module "terraform_secrets_from_encrypted_s3_bucket" {
 locals {
   chart_versions = {
     otc_storage_classes   = "2.0.2"
-    crds                  = "1.5.1"
+    crds                  = "1.6.3"
     argo                  = "15.0.1"
     kyverno               = "1.2.1"
     iits_kyverno_policies = "1.5.0"

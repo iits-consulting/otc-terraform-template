@@ -1,4 +1,5 @@
 resource "helm_release" "ollama" {
+  depends_on = [helm_release.otc_storage_classes,helm_release.traefik]
   name       = "ollama"
   repository = "https://charts.iits.tech"
   chart      = "ollama"

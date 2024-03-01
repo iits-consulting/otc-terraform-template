@@ -18,6 +18,7 @@ resource "helm_release" "kyverno" {
     yamlencode({
       ingress = {
         host = "admin.${var.domain_name}"
+        enabled = false
       }
     })
   ]

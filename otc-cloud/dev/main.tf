@@ -62,14 +62,15 @@ module "cce_gpu_node_pool" {
 
   name_prefix                     = module.cce.cluster_name
   cce_cluster_id                  = module.cce.cluster_id
-  node_availability_zones         = ["eu-de-03"]
-  node_flavor                     = local.gpu_node_config.node_flavor
-  node_storage_type               = local.gpu_node_config.node_storage_type
-  node_storage_size               = local.gpu_node_config.node_storage_size
-  node_count                      = local.gpu_node_config.node_count
-  node_storage_encryption_enabled = false
-  autoscaler_node_max             = local.gpu_node_config.nodes_max
-  gpu_driver_url                  = local.gpu_node_config.gpu_driver_url
+  node_availability_zones         = [var.availability_zones[0]]
+  node_os                         = var.gpu_node_config.node_os
+  node_flavor                     = var.gpu_node_config.node_flavor
+  node_storage_type               = var.gpu_node_config.node_storage_type
+  node_storage_size               = var.gpu_node_config.node_storage_size
+  node_scaling_enabled            = var.gpu_node_config.enable_scaling
+  node_count                      = var.gpu_node_config.node_count
+  autoscaler_node_max             = var.gpu_node_config.nodes_max
+  gpu_driver_url                  = var.gpu_node_config.gpu_driver_url
 
   tags = local.tags
 }

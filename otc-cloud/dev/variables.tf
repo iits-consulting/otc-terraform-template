@@ -18,16 +18,18 @@ variable "vpc_cidr" {
   description = "IP range of the VPC"
 }
 
-locals {
-  gpu_node_config = {
-    node_os           = "Ubuntu 22.04"
-    node_flavor       = "pi2.2xlarge.4"
-    node_storage_type = "SSD"
-    node_storage_size = 100
-    node_count        = 1
-    nodes_max         = 1
-    gpu_driver_url    = "https://us.download.nvidia.com/tesla/535.129.03/NVIDIA-Linux-x86_64-535.129.03.run"
-  }
+variable "gpu_node_config" {
+  description = "Cluster gpu node configuration parameters"
+  type = object({
+    enable_scaling    = bool
+    node_os           = string
+    node_flavor       = string
+    node_storage_type = string
+    node_storage_size = number
+    node_count        = number
+    nodes_max         = number
+    gpu_driver_url    = string
+  })
 }
 
 variable "cluster_config" {

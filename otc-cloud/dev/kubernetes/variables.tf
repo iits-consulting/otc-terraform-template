@@ -1,28 +1,12 @@
-module "terraform_secrets_from_encrypted_s3_bucket" {
-  source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
-  version           = "5.7.1"
-  bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
-  bucket_object_key = "terraform-secrets"
-  required_secrets = [
-    "elb_id",
-    "elb_public_ip",
-    "kubectl_config",
-    "kubernetes_ca_cert",
-    "client_certificate_data",
-    "kube_api_endpoint",
-    "client_key_data",
-    "cce_id",
-    "cce_name",
-  ]
-}
-
-locals {
-  chart_versions = {
-    otc_storage_classes   = "2.0.2"
-    crds                  = "1.6.3"
-    argo                  = "15.0.1"
-    kyverno               = "1.2.1"
-    iits_kyverno_policies = "1.5.0"
+data "terraform_remote_state" "infrastructure" {
+  backend = "s3"
+  config = {
+    bucket                      = "${var.context}-${var.stage}-tfstate"
+    key                         = "tfstate"
+    region                      = var.region
+    endpoint                    = "obs.${var.region}.otc.t-systems.com"
+    skip_region_validation      = true
+    skip_credentials_validation = true
   }
 }
 
@@ -69,11 +53,11 @@ variable "argocd_bootstrap_project_url" {
   description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
   validation {
     condition     = !can(regex("iits-consulting", var.argocd_bootstrap_project_url))
-    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use your fork and not the iits-consulting repo"
+    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use your fork and not the iits-consulting repo!"
   }
   validation {
-    condition     = can(regex("https://github.com", var.argocd_bootstrap_project_url))
-    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use the https link from you fork"
+    condition     = can(regex("https://", var.argocd_bootstrap_project_url))
+    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use the https link from you fork!"
   }
 }
 
@@ -90,4 +74,16 @@ variable "email" {
 variable "ak_sk_security_token" {
   type        = string
   description = "Security Token for temporary AK/SK"
+}
+
+locals {
+  chart_versions = {
+    otc_storage_classes   = "2.0.2"
+    crds                  = "1.6.3"
+    argo                  = "15.0.1"
+    kyverno               = "1.2.1"
+    iits_kyverno_policies = "1.5.0"
+    traefik               = "21.1.0"
+    cert-manager          = "0.2.3"
+  }
 }

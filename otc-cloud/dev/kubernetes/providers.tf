@@ -10,18 +10,11 @@ provider "opentelekomcloud" {
   security_token = var.ak_sk_security_token
 }
 
-provider "kubernetes" {
-  host                   = module.terraform_secrets_from_encrypted_s3_bucket.secrets["kube_api_endpoint"]
-  client_certificate     = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["client_certificate_data"])
-  client_key             = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["client_key_data"])
-  cluster_ca_certificate = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["kubernetes_ca_cert"])
-}
-
 provider "helm" {
   kubernetes {
-    host                   = module.terraform_secrets_from_encrypted_s3_bucket.secrets["kube_api_endpoint"]
-    client_certificate     = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["client_certificate_data"])
-    client_key             = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["client_key_data"])
-    cluster_ca_certificate = base64decode(module.terraform_secrets_from_encrypted_s3_bucket.secrets["kubernetes_ca_cert"])
+    host                   = data.terraform_remote_state.infrastructure.outputs.kubernetes["api_endpoint"]
+    client_certificate     = base64decode(data.terraform_remote_state.infrastructure.outputs.kubernetes["client_certificate"])
+    client_key             = base64decode(data.terraform_remote_state.infrastructure.outputs.kubernetes["client_key"])
+    cluster_ca_certificate = base64decode(data.terraform_remote_state.infrastructure.outputs.kubernetes["certificate_authority"])
   }
 }

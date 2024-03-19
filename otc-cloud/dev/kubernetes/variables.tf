@@ -2,7 +2,7 @@ data "terraform_remote_state" "infrastructure" {
   backend = "s3"
   config = {
     bucket                      = "${var.context}-${var.stage}-tfstate"
-    key                         = "tfstate"
+    key                         = "tfstate-infrastructure"
     region                      = var.region
     endpoint                    = "obs.${var.region}.otc.t-systems.com"
     skip_region_validation      = true

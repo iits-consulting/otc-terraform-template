@@ -66,7 +66,7 @@ First go into the folder otc-cloud/dev
 ### Create Terraform state bucket
 
 To be able to store the state of terraform somewhere secure, we need first to create a remote tfstate backend.
-THe remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
+The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
 
 2. Execute 
       ```shell
@@ -74,20 +74,16 @@ THe remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
       ```
 3. Execute
       ```shell
-      terraform apply --target module.tf_state_bucket --auto-approve
+      terraform apply --auto-approve
       ```
 4. Wait for completion
 5. After completion we should get a output which looks like this:
    ![terraform-output-remote-state.png](documentation%2Fterraform-output-remote-state.png)
 6. Copy the output and replace inside the settings.tf file the commented out section of the backend with the output
-7. Execute this command
-      ```shell
-   terraform init
-      ```
-8. Type _yes_ and enter
-9. remove the files _terraform.tfstate_ and _terraform.tfstate.backup_
 
-## Execute Terraform
+## Execute Terraform for infrastructure
+
+1. Switch into the folder otc-cloud/dev/infrastructure
 1. Now take a look at the main.tf and try to understand what we want to set up
     - (Optional) Add or remove some modules from main.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest

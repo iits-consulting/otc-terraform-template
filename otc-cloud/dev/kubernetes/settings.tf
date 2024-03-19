@@ -10,8 +10,13 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.16.0"
     }
+    opentelekomcloud = {
+      source  = "opentelekomcloud/opentelekomcloud"
+      version = ">=1.35.6"
+    }
     helm = {
       source = "hashicorp/helm"
     }
   }
 }
+

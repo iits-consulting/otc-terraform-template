@@ -46,7 +46,7 @@ module "cce" {
 resource "null_resource" "get_kube_config" {
   depends_on = [module.cce]
   provisioner "local-exec" {
-    command = "./stage-dependent-env.sh"
+    command = "../stage-dependent-env.sh"
   }
 }
 

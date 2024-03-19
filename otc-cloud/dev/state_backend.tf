@@ -41,7 +41,7 @@ resource "opentelekomcloud_obs_bucket" "remote_state_bucket" {
 output "terraform_state_backend_config" {
   value = [for path in local.terraform_paths : <<EOT
 
-Place this this under otc-cloud/${var.stage}/${path}/settings.tf under TODO !
+Place this under otc-cloud/${var.stage}/${path}/settings.tf under TODO !
 
     backend "s3" {
       bucket                      = "${opentelekomcloud_obs_bucket.remote_state_bucket.bucket}"

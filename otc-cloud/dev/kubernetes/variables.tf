@@ -1,19 +1,13 @@
-module "terraform_secrets_from_encrypted_s3_bucket" {
-  source            = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/obs_secrets_reader"
-  version           = "5.7.1"
-  bucket_name       = replace(lower("${var.region}-${var.context}-${var.stage}-stage-secrets"), "_", "-")
-  bucket_object_key = "terraform-secrets"
-  required_secrets  = [
-    "elb_id",
-    "elb_public_ip",
-    "kubectl_config",
-    "kubernetes_ca_cert",
-    "client_certificate_data",
-    "kube_api_endpoint",
-    "client_key_data",
-    "cce_id",
-    "cce_name",
-  ]
+data "terraform_remote_state" "infrastructure" {
+  backend = "s3"
+  config = {
+    bucket                      = "${var.context}-${var.stage}-tfstate"
+    key                         = "tfstate-infrastructure"
+    region                      = var.region
+    endpoint                    = "obs.${var.region}.otc.t-systems.com"
+    skip_region_validation      = true
+    skip_credentials_validation = true
+  }
 }
 
 locals {
@@ -59,6 +53,12 @@ variable "dockerhub_username" {
 variable "dockerhub_password" {
   type        = string
   description = "Password of Docker Registry Credentials for ArgoCD"
+  sensitive   = true
+}
+
+variable "git_token" {
+  type        = string
+  description = "Git Access Token for ArgoCD"
   sensitive   = true
 }
 

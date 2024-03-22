@@ -1,19 +1,22 @@
 terraform {
   required_version = ">=v1.4.6"
 
-  //TODO add the s3 block here
+  #  backend "s3" {
+  #    //TODO
+  #  }
 
   required_providers {
-    opentelekomcloud = {
-      source  = "opentelekomcloud/opentelekomcloud"
-      version = ">=1.35.6"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.16.0"
+    }
+    opentelekomcloud = {
+      source  = "opentelekomcloud/opentelekomcloud"
+      version = ">=1.35.6"
     }
     helm = {
       source = "hashicorp/helm"
     }
   }
 }
+

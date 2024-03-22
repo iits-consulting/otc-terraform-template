@@ -34,6 +34,20 @@ variable "cluster_config" {
   })
 }
 
+variable "gpu_node_config" {
+  description = "Cluster gpu node configuration parameters"
+  type = object({
+    enable_scaling    = bool
+    node_os           = string
+    node_flavor       = string
+    node_storage_type = string
+    node_storage_size = number
+    node_count        = number
+    nodes_max         = number
+    gpu_driver_url    = string
+  })
+}
+
 variable "context" {
   type        = string
   description = "Project context for resource naming and tagging."

@@ -17,7 +17,7 @@ resource "helm_release" "kyverno" {
   values = [
     yamlencode({
       ingress = {
-        host = "admin.${var.domain_name}"
+        host    = "admin.${var.domain_name}"
         enabled = false
       }
     })
@@ -46,9 +46,9 @@ resource "helm_release" "iits_kyverno_policies" {
       enabled = true
       secrets = {
         dockerhub = {
-          username         = var.dockerhub_username
-          password         = var.dockerhub_password
-          registryUrl      = "https://index.docker.io/v1"
+          username         = var.git_registry_username
+          password         = var.git_registry_password
+          registryUrl      = "registry.gitlab.iits.tech"
           registryWildcard = "*"
         }
       }

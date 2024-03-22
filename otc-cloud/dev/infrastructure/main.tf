@@ -18,7 +18,7 @@ module "snat" {
 
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version     = "5.8.4"
+  version = "5.8.4"
 
   name                           = "${var.context}-${var.stage}"
   cluster_vpc_id                 = module.vpc.vpc.id
@@ -52,19 +52,19 @@ resource "null_resource" "get_kube_config" {
 
 module "cce_gpu_node_pool" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce_gpu_node_pool"
-  version     = "5.8.4"
+  version = "5.8.4"
 
-  name_prefix                     = module.cce.cluster_name
-  cce_cluster_id                  = module.cce.cluster_id
-  node_availability_zones         = [var.availability_zones[0]]
-  node_os                         = var.gpu_node_config.node_os
-  node_flavor                     = var.gpu_node_config.node_flavor
-  node_storage_type               = var.gpu_node_config.node_storage_type
-  node_storage_size               = var.gpu_node_config.node_storage_size
-  node_scaling_enabled            = var.gpu_node_config.enable_scaling
-  node_count                      = var.gpu_node_config.node_count
-  autoscaler_node_max             = var.gpu_node_config.nodes_max
-  gpu_driver_url                  = var.gpu_node_config.gpu_driver_url
+  name_prefix             = module.cce.cluster_name
+  cce_cluster_id          = module.cce.cluster_id
+  node_availability_zones = [var.availability_zones[0]]
+  node_os                 = var.gpu_node_config.node_os
+  node_flavor             = var.gpu_node_config.node_flavor
+  node_storage_type       = var.gpu_node_config.node_storage_type
+  node_storage_size       = var.gpu_node_config.node_storage_size
+  node_scaling_enabled    = var.gpu_node_config.enable_scaling
+  node_count              = var.gpu_node_config.node_count
+  autoscaler_node_max     = var.gpu_node_config.nodes_max
+  gpu_driver_url          = var.gpu_node_config.gpu_driver_url
 
   tags = local.tags
 }
@@ -95,7 +95,7 @@ module "public_dns" {
   email   = var.email
   a_records = {
     (var.domain_name) = [module.loadbalancer.elb_public_ip]
-    airbyte             = [module.loadbalancer.elb_public_ip]
+    airbyte           = [module.loadbalancer.elb_public_ip]
   }
 }
 

@@ -25,11 +25,11 @@ resource "helm_release" "traefik" {
     traefik = {
       service = {
         annotations = {
-          "kubernetes.io/elb.id" = module.terraform_secrets_from_encrypted_s3_bucket.secrets["elb_id"]
+          "kubernetes.io/elb.id" = data.terraform_remote_state.infrastructure.outputs.elb["id"]
         }
       }
     }
-  })
+    })
   ]
   depends_on = [helm_release.custom_resource_definitions]
 }

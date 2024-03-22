@@ -1,10 +1,81 @@
-ingress:
-  airbyte:
-    host: "airbyte.${domain_name}"
+airbyte:
+  webapp:
+    ingress:
+      hosts:
+        - host: "airbyte.${domain_name}"
+      annotations:
+        traefik.ingress.kubernetes.io/router.middlewares: ""
+      tls:
+        - hosts:
+            - "airbyte.${domain_name}"
+          secretName: airbyte-cert
+  global:
+    jobs:
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "16Gi"
+          cpu: "4"
+      kube:
+        tolerations:
+          - key: gpu-node
+            operator: Exists
+            effect: PreferNoSchedule
 ollama:
   ollama:
+    image:
+      repository: "ollama/ollama"
+      tag: 0.1.26
+    resources:
+      requests:
+        memory: 12Gi
+        cpu: 2
+      limits:
+        memory: 18Gi
+        cpu: 4
+
     ingress:
       host: "${domain_name}"
+      annotations:
+      # Adds the oidc proxy upfront
+  #        traefik.ingress.kubernetes.io/router.middlewares: "llm-ollama-forward-auth@kubernetescrd, llm-strip-prefix-ollama@kubernetescrd"
   webui:
+    image:
+      repository: "registry.gitlab.iits.tech/private/llm/ollama-ui"
+      tag: "prod"
     ingress:
+      annotations:
+      # Adds the oidc proxy upfront
+      #        traefik.ingress.kubernetes.io/router.middlewares: "llm-ollama-forward-auth@kubernetescrd"
       host: "${domain_name}"
+    env:
+      OLLAMA_API_BASE_URL: "https://${domain_name}/ollama/api"
+      MIDDLEWARE_API_BASE_URL: "https://${domain_name}/middleware/api"
+  middleware:
+    deployment:
+      image:
+        repository: "registry.gitlab.iits.tech/private/llm/llm-middleware"
+        tag: "prod"
+      env:
+        OLLAMA_URL: "http://ollama:11434"
+        WEAVIATE_URL: "http://weaviate:80"
+        OPENAI_API_TOKEN: "REPLACE ME"
+      resources:
+        requests:
+          memory: "3Gi"
+          cpu: "1000m"
+        limits:
+          memory: "4Gi"
+          cpu: "2000m"
+      tolerations:
+        - key: gpu-node
+          operator: Exists
+          effect: PreferNoSchedule
+    ingress:
+      annotations:
+      # Adds the oidc proxy upfront
+      #        traefik.ingress.kubernetes.io/router.middlewares: "llm-ollama-forward-auth@kubernetescrd"
+      host: "${domain_name}"
+      path: "/middleware"

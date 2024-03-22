@@ -1,6 +1,0 @@
-ollama:
-  ingress:
-    host: "${domain_name}"
-webui:
-  ingress:
-    host: "${domain_name}"

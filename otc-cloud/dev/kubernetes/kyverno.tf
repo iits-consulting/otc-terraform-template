@@ -45,7 +45,7 @@ resource "helm_release" "iits_kyverno_policies" {
     autoInjectDockerPullSecrets = {
       enabled = true
       secrets = {
-        dockerhub = {
+        gitlab = {
           username         = var.git_registry_username
           password         = var.git_registry_password
           registryUrl      = "registry.gitlab.iits.tech"

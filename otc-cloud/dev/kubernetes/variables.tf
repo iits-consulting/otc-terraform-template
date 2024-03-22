@@ -19,8 +19,7 @@ locals {
     iits_kyverno_policies = "1.5.1"
     traefik               = "21.2.1"
     cert-manager          = "1.0.0"
-    ollama                = "0.6.14"
-    iits_llm_fullstack    = "0.2.6"
+    iits_llm_fullstack    = "0.3.4"
   }
 }
 

@@ -13,9 +13,14 @@ resource "helm_release" "traefik" {
   wait_for_jobs         = true
   values = [
     yamlencode({
-      ingressRoute = {
-        rootDomain  = var.domain_name
-        adminDomain = "admin.${var.domain_name}"
+      ingress = {
+        host  = "admin.${var.domain_name}"
+      }
+      defaultCert = {
+        dnsNames = {
+          rootDomain = var.domain_name
+          adminDomain = "admin.${var.domain_name}"
+        }
       }
       traefik = {
         additionalArguments = [
@@ -23,20 +28,6 @@ resource "helm_release" "traefik" {
           "--entryPoints.web.forwardedHeaders.trustedIPs=100.125.0.0/16",
           "--entryPoints.websecure.forwardedHeaders.trustedIPs=100.125.0.0/16",
         ]
-        providers = {
-          kubernetesCRD = {
-            enabled                   = true
-            allowExternalNameServices = true
-            allowCrossNamespace       = true
-          }
-          kubernetesIngress = {
-            enabled                   = true
-            allowExternalNameServices = true
-            publishedService = {
-              enabled = true
-            }
-          }
-        }
         service = {
           annotations = {
             "kubernetes.io/elb.id" = data.terraform_remote_state.infrastructure.outputs.elb["id"]
@@ -62,12 +53,8 @@ resource "helm_release" "cert-manager" {
   dependency_update     = true
   wait_for_jobs         = true
   values = [yamlencode({
-    cert-manager = {
-      replicaCount = 2
-    }
     clusterIssuer = {
       http = {
-        name  = "letsencrypt"
         email = var.email
       }
     }

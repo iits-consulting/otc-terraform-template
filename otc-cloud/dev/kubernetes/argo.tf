@@ -35,10 +35,11 @@ resource "helm_release" "argocd" {
           git = {
             password = var.git_token
             repoUrl  = var.argocd_bootstrap_project_url
+            branch = "forward-auth"
           }
         }
       }
-      }
+    }
     )
   ]
 }

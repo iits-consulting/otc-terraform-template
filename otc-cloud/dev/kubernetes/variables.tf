@@ -83,7 +83,7 @@ locals {
     argo                  = "15.0.1"
     kyverno               = "1.3.2"
     iits_kyverno_policies = "1.6.0"
-    traefik               = "21.2.1"
-    cert-manager          = "1.0.0"
+    traefik               = "21.3.1"
+    cert-manager          = "1.0.1"
   }
 }

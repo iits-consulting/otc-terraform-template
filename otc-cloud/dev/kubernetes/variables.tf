@@ -81,9 +81,9 @@ locals {
     otc_storage_classes   = "2.0.2"
     crds                  = "1.6.3"
     argo                  = "15.0.1"
-    kyverno               = "1.2.1"
-    iits_kyverno_policies = "1.5.0"
-    traefik               = "21.1.0"
-    cert-manager          = "0.2.3"
+    kyverno               = "1.3.2"
+    iits_kyverno_policies = "1.6.0"
+    traefik               = "21.2.1"
+    cert-manager          = "1.0.0"
   }
 }

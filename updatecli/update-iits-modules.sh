@@ -1,0 +1,1 @@
+cd .. && updatecli apply -c updatecli/infrastructure-modules.yaml

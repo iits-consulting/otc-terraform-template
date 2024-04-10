@@ -79,9 +79,9 @@ variable "ak_sk_security_token" {
 locals {
   chart_versions = {
     otc_storage_classes   = "2.0.2"
-    crds                  = "1.6.3"
+    crds                  = "1.7.0"
     argo                  = "15.0.1"
-    kyverno               = "1.3.2"
+    kyverno               = "1.5.2"
     iits_kyverno_policies = "1.6.0"
     traefik               = "21.3.1"
     cert-manager          = "1.0.1"

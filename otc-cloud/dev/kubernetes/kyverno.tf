@@ -38,6 +38,9 @@ resource "helm_release" "iits_kyverno_policies" {
   render_subchart_notes = true
   dependency_update     = true
   values = sensitive([yamlencode({
+    enforceSecurityContext = {
+      enabled = false
+    }
     autoInjectDockerPullSecrets = {
       enabled = true
       secrets = {

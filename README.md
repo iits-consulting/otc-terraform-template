@@ -24,7 +24,7 @@ The following services we will deploy later
 
 **Please keep in mind this workshop just teaches the basics. For a proper and secure production setup please contact us at kontakt@iits-consulting.de**
 
-## Tools Requirements
+## Tools Requirements (not necessary if you use KASM)
 
 * Install Terraform in the Version 1.4.6 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
@@ -34,7 +34,7 @@ The following services we will deploy later
 * Github Account
 
 ## Preparation & Requirements
-1. First we will pull the Terraform sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template
+1. First we will pull the Terraform sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template (not necessary if you use KASM)
       ![clone-otc-terraform-template.png](documentation%2Fclone-otc-terraform-template.png)
   * Click on _Code_
   * Clone the repository 
@@ -122,7 +122,7 @@ For that we will deploy everything from our Fork from the _Preparation & Require
 First we will access ArgoCD over a kubectl port-forward. To do that execute the following commands in your cli:
 
 ```shell
-# This command will make the argo command available
+# This command will make the argo command available (not necessary if you use KASM)
 source shell-helper.sh
 # Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/argocd
 # It will print out the Username and the Password on the first line and the browser should open automatically.
@@ -141,7 +141,7 @@ Inside this file you will find the credentials to be able to access your page.
 We are finished with the terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
 
 
-## Do the workshop on your tenant
+## Do the workshop on your tenant 
 
 If you want to do the workshop on your tenant you need to create a user first and configure the IAM. 
 

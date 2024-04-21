@@ -38,17 +38,7 @@ The following services we will deploy later
       ![clone-otc-terraform-template.png](documentation%2Fclone-otc-terraform-template.png)
   * Click on _Code_
   * Clone the repository 
-2. Next step is to create a fork for the ArgoCD project. Please go to this link: https://github.com/iits-consulting/otc-infrastructure-charts-template
-  * Click on _Use this template_
-  * Click on _Create a new repository_ 
-    * choose a repository name 
-    * select _Private_ repository
-3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
-    * Click [here](https://github.com/settings/tokens?type=beta) to do that
-    * Select _Only select repositories_ and choose your fork of the infrastructure-charts
-    * Permissions
-      * Contents -> Read-Only
-      * Commit Status -> Read-Only
+
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)

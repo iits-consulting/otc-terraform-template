@@ -52,8 +52,8 @@ variable "argocd_bootstrap_project_url" {
   type        = string
   description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
   validation {
-    condition     = !can(regex("iits-consulting", var.argocd_bootstrap_project_url))
-    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use your fork and not the iits-consulting repo!"
+    condition     = can(regex("iits-consulting", var.argocd_bootstrap_project_url))
+    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Use please a branch of the iits infrastructure template project"
   }
   validation {
     condition     = can(regex("https://", var.argocd_bootstrap_project_url))
@@ -74,6 +74,11 @@ variable "email" {
 variable "ak_sk_security_token" {
   type        = string
   description = "Security Token for temporary AK/SK"
+}
+
+variable "argocd_bootstrap_project_branch" {
+  type = string
+  description = "Which branch should be synced"
 }
 
 locals {

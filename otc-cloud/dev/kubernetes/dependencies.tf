@@ -1,14 +1,3 @@
-resource "helm_release" "custom_resource_definitions" {
-  name                  = "crds"
-  repository            = "https://charts.iits.tech"
-  chart                 = "crds"
-  version               = local.chart_versions.crds
-  namespace             = "crds"
-  create_namespace      = true
-  render_subchart_notes = true
-  dependency_update     = true
-}
-
 resource "random_id" "storage_class_kms_id" {
   byte_length = 4
 }
@@ -24,7 +13,7 @@ resource "helm_release" "otc_storage_classes" {
   name                  = "otc-storage-classes"
   repository            = "https://charts.iits.tech"
   chart                 = "otc-storage-classes"
-  version               = local.chart_versions.otc_storage_classes
+  version               = local.chart_versions.cce_storage_classes
   namespace             = "storage"
   create_namespace      = true
   render_subchart_notes = true

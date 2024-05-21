@@ -1,6 +1,6 @@
 module "vpc" {
   source             = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/vpc"
-  version            = "5.8.4"
+  version            = "6.0.2"
   name               = "${var.context}-${var.stage}-vpc"
   cidr_block         = var.vpc_cidr
   enable_shared_snat = false
@@ -9,7 +9,7 @@ module "vpc" {
 
 module "snat" {
   source      = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/snat"
-  version     = "5.8.4"
+  version     = "6.0.2"
   name_prefix = "${var.context}-${var.stage}"
   subnet_id   = module.vpc.subnets["kubernetes-subnet"].id
   vpc_id      = module.vpc.vpc.id
@@ -18,7 +18,7 @@ module "snat" {
 
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version = "5.8.4"
+  version = "6.0.2"
 
   name                           = "${var.context}-${var.stage}"
   cluster_vpc_id                 = module.vpc.vpc.id
@@ -50,9 +50,28 @@ resource "null_resource" "get_kube_config" {
   }
 }
 
+module "cce_gpu_node_pool" {
+  source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce_gpu_node_pool"
+  version = "6.0.2"
+
+  name_prefix             = module.cce.cluster_name
+  cce_cluster_id          = module.cce.cluster_id
+  node_availability_zones = [var.availability_zones[0]]
+  node_os                 = var.gpu_node_config.node_os
+  node_flavor             = var.gpu_node_config.node_flavor
+  node_storage_type       = var.gpu_node_config.node_storage_type
+  node_storage_size       = var.gpu_node_config.node_storage_size
+  node_scaling_enabled    = var.gpu_node_config.enable_scaling
+  node_count              = var.gpu_node_config.node_count
+  autoscaler_node_max     = var.gpu_node_config.nodes_max
+  gpu_driver_url          = var.gpu_node_config.gpu_driver_url
+
+  tags = local.tags
+}
+
 module "loadbalancer" {
   source       = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/loadbalancer"
-  version      = "5.8.4"
+  version      = "6.0.2"
   context_name = var.context
   subnet_id    = module.vpc.subnets["kubernetes-subnet"].subnet_id
   stage_name   = var.stage
@@ -61,7 +80,7 @@ module "loadbalancer" {
 
 module "private_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
-  version = "5.8.4"
+  version = "6.0.2"
   domain  = "vpc.private"
   a_records = {
     kubernetes = [split(":", trimprefix(module.cce.cluster_private_ip, "https://"))[0]]
@@ -71,34 +90,12 @@ module "private_dns" {
 
 module "public_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
-  version = "5.8.4"
+  version = "6.0.2"
   domain  = var.domain_name
   email   = var.email
   a_records = {
     (var.domain_name) = [module.loadbalancer.elb_public_ip]
-    admin             = [module.loadbalancer.elb_public_ip]
-  }
-}
-
-output "elb" {
-  sensitive = true
-  value = {
-    id         = module.loadbalancer.elb_id
-    public_ip  = module.loadbalancer.elb_public_ip
-    private_ip = module.loadbalancer.elb_private_ip
-  }
-}
-
-output "kubernetes" {
-  sensitive = true
-  value = {
-    certificate_authority = module.cce.cluster_credentials.cluster_certificate_authority_data
-    client_certificate    = module.cce.cluster_credentials.client_certificate_data
-    api_endpoint          = module.cce.cluster_public_ip
-    api_private_endpoint  = module.cce.cluster_private_ip
-    client_key            = module.cce.cluster_credentials.client_key_data
-    cce_id                = module.cce.cluster_id
-    cce_name              = module.cce.cluster_name
-    kubectl_config        = module.cce.kubeconfig
+    ollama            = [module.loadbalancer.elb_public_ip]
+    llm               = [module.loadbalancer.elb_public_ip]
   }
 }

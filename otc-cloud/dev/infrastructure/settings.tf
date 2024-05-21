@@ -1,9 +1,14 @@
 terraform {
-  required_version = ">=v1.4.6"
+  required_version = "v1.5.7"
 
-  #  backend "s3" {
-  #    //TODO
-  #  }
+  backend "s3" {
+    bucket                      = "forrester-dev-tfstate"
+    key                         = "tfstate-infrastructure"
+    region                      = "eu-de"
+    endpoint                    = "obs.eu-de.otc.t-systems.com"
+    skip_region_validation      = true
+    skip_credentials_validation = true
+  }
 
   required_providers {
     opentelekomcloud = {

@@ -8,7 +8,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.16.0"
+      version = "2.31.0"
     }
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"

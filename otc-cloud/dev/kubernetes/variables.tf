@@ -4,9 +4,13 @@ data "terraform_remote_state" "infrastructure" {
     bucket                      = "${var.context}-${var.stage}-tfstate"
     key                         = "tfstate-infrastructure"
     region                      = var.region
-    endpoint                    = "obs.${var.region}.otc.t-systems.com"
+    endpoints = {
+      s3 = "https://obs.${var.region}.otc.t-systems.com"
+    }
     skip_region_validation      = true
     skip_credentials_validation = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
   }
 }
 
@@ -50,15 +54,13 @@ variable "git_token" {
 
 variable "argocd_bootstrap_project_url" {
   type        = string
-  description = "Link to the git project which is a fork of this project here: https://github.com/iits-consulting/terraform-opentelekomcloud-project-factory"
-  validation {
-    condition     = can(regex("iits-consulting", var.argocd_bootstrap_project_url))
-    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Use please a branch of the iits infrastructure template project"
-  }
-  validation {
-    condition     = can(regex("https://", var.argocd_bootstrap_project_url))
-    error_message = "TF_VAR_argocd_bootstrap_project_url is set wrong. Please use the https link from you fork!"
-  }
+  description = "Link to the git project where the ArgoCD infrastructure Apps are stored"
+  default = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
+}
+
+variable "argocd_bootstrap_project_branch" {
+  type = string
+  description = "Your branch which you are working on"
 }
 
 variable "domain_name" {
@@ -76,19 +78,18 @@ variable "ak_sk_security_token" {
   description = "Security Token for temporary AK/SK"
 }
 
-variable "argocd_bootstrap_project_branch" {
+variable "cert_manager_access_key" {
   type = string
-  description = "Which branch should be synced"
+  validation {
+    condition     = var.cert_manager_access_key != ""
+    error_message = "cert_manager_access_key is mandatory"
+  }
 }
 
-locals {
-  chart_versions = {
-    otc_storage_classes   = "2.0.2"
-    crds                  = "1.7.0"
-    argo                  = "15.0.1"
-    kyverno               = "1.5.2"
-    iits_kyverno_policies = "1.6.0"
-    traefik               = "21.3.1"
-    cert-manager          = "1.0.1"
+variable "cert_manager_secret_key" {
+  type = string
+  validation {
+    condition     = var.cert_manager_secret_key != ""
+    error_message = "cert_manager_secret_key is mandatory"
   }
 }

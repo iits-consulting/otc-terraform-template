@@ -1,9 +1,7 @@
 terraform {
-  required_version = ">=v1.4.6"
+  required_version = "v1.9.0"
 
-  #  backend "s3" {
-  #    //TODO
-  #  }
+  //TODO Add backend config S3 here
 
   required_providers {
     kubernetes = {
@@ -19,4 +17,3 @@ terraform {
     }
   }
 }
-

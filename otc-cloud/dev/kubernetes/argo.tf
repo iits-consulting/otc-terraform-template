@@ -7,23 +7,28 @@ resource "random_password" "basic_auth_password" {
 }
 
 resource "helm_release" "argocd" {
-  depends_on = [
-    helm_release.custom_resource_definitions, helm_release.otc_storage_classes, helm_release.iits_kyverno_policies
-  ]
+  depends_on = [helm_release.cce_storage_classes]
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
   chart                 = "argocd"
-  version               = local.chart_versions.argo
+  version               = "16.2.0"
   namespace             = "argocd"
   create_namespace      = true
   wait                  = true
   atomic                = true
-  timeout               = 900 // 15 Minutes
+  timeout               = 300 // 5 Minutes
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
   values = [
     yamlencode({
+      argo-cd = {
+        server = {
+          ingress = {
+            hostname = "admin.${var.domain_name}"
+          }
+        }
+      }
       projects = {
         infrastructure-charts = {
           projectValues = {
@@ -35,6 +40,7 @@ resource "helm_release" "argocd" {
           git = {
             password = var.git_token
             repoUrl  = var.argocd_bootstrap_project_url
+            branch   = var.argocd_bootstrap_project_branch
           }
         }
       }

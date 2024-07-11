@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">=v1.4.6"
+  required_version = "v1.9.0"
   required_providers {
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
-      version = ">=1.35.6"
+      version = ">=1.36.12"
     }
   }
 }
@@ -42,14 +42,17 @@ output "terraform_state_backend_config" {
   value = [for path in local.terraform_paths : <<EOT
 
 Place this this under otc-cloud/${var.stage}/${path}/settings.tf under TODO !
-
     backend "s3" {
       bucket                      = "${opentelekomcloud_obs_bucket.remote_state_bucket.bucket}"
       key                         = "tfstate-${path}"
       region                      = "${opentelekomcloud_obs_bucket.remote_state_bucket.region}"
-      endpoint                    = "obs.${opentelekomcloud_obs_bucket.remote_state_bucket.region}.otc.t-systems.com"
+      endpoints = {
+        s3 = "https://obs.${opentelekomcloud_obs_bucket.remote_state_bucket.region}.otc.t-systems.com"
+      }
       skip_region_validation      = true
       skip_credentials_validation = true
+      skip_requesting_account_id  = true
+      skip_s3_checksum            = true
     }
   EOT
   ]

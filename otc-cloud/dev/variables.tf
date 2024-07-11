@@ -23,6 +23,7 @@ locals {
   tf_state_bucket_name = "${var.context}-${var.stage}-tfstate"
   terraform_paths = [
     "infrastructure",
-    "kubernetes",
+    "crds",
+    "kubernetes"
   ]
 }

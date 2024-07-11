@@ -2,24 +2,26 @@ resource "helm_release" "traefik" {
   name                  = "traefik"
   chart                 = "traefik"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.traefik
+  version               = "28.2.0"
   namespace             = "routing"
   create_namespace      = true
   wait                  = true
   atomic                = true
-  timeout               = 900
+  timeout               = 300
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
   values = [
     yamlencode({
-      ingress = {
-        host  = "admin.${var.domain_name}"
-      }
       defaultCert = {
-        dnsNames = {
-          rootDomain = var.domain_name
-          adminDomain = "admin.${var.domain_name}"
+        dnsNames = [
+          var.domain_name,
+          "*.${var.domain_name}",
+        ]
+      }
+      ingressRoute = {
+        healthcheck = {
+          enabled = true
         }
       }
       traefik = {
@@ -36,14 +38,14 @@ resource "helm_release" "traefik" {
       }
     })
   ]
-  depends_on = [helm_release.custom_resource_definitions]
 }
+
 
 resource "helm_release" "cert-manager" {
   name                  = "cert-manager"
   chart                 = "cert-manager"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.cert-manager
+  version               = "1.0.1"
   namespace             = "cert-manager"
   create_namespace      = true
   wait                  = true
@@ -52,12 +54,17 @@ resource "helm_release" "cert-manager" {
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
-  values = [yamlencode({
-    clusterIssuer = {
-      http = {
+  values = concat([
+    yamlencode({
+      clusterIssuers = {
         email = var.email
+        otcDNS = {
+          region    = var.region
+          accessKey = var.cert_manager_access_key
+          secretKey = var.cert_manager_secret_key
+        }
       }
-    }
-  })]
+    })
+  ])
   depends_on = [helm_release.traefik]
 }

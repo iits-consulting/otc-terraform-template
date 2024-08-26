@@ -78,18 +78,7 @@ variable "ak_sk_security_token" {
   description = "Security Token for temporary AK/SK"
 }
 
-variable "cert_manager_access_key" {
+variable "otc_user_id" {
   type = string
-  validation {
-    condition     = var.cert_manager_access_key != ""
-    error_message = "cert_manager_access_key is mandatory"
-  }
-}
-
-variable "cert_manager_secret_key" {
-  type = string
-  validation {
-    condition     = var.cert_manager_secret_key != ""
-    error_message = "cert_manager_secret_key is mandatory"
-  }
+  description = "Id of the username we need it to create a temp AK/SK for cert-manager"
 }

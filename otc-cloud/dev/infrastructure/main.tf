@@ -1,15 +1,14 @@
 module "vpc" {
   source             = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/vpc"
-  version            = "6.1.1"
+  version            = "7.1.0"
   name               = "${var.context}-${var.stage}-vpc"
   cidr_block         = var.vpc_cidr
-  enable_shared_snat = false
   tags               = local.tags
 }
 
 module "snat" {
   source      = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/snat"
-  version     = "6.1.1"
+  version     = "7.1.0"
   name_prefix = "${var.context}-${var.stage}"
   subnet_id   = module.vpc.subnets["kubernetes-subnet"].id
   vpc_id      = module.vpc.vpc.id
@@ -18,7 +17,7 @@ module "snat" {
 
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version = "6.1.1"
+  version = "7.1.0"
 
   name                           = "${var.context}-${var.stage}"
   cluster_vpc_id                 = module.vpc.vpc.id
@@ -45,7 +44,7 @@ module "cce" {
 
 module "loadbalancer" {
   source       = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/loadbalancer"
-  version      = "6.1.1"
+  version      = "7.1.0"
   context_name = var.context
   subnet_id    = module.vpc.subnets["kubernetes-subnet"].subnet_id
   stage_name   = var.stage
@@ -54,9 +53,9 @@ module "loadbalancer" {
 
 module "private_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
-  version = "6.1.1"
+  version = "7.1.0"
 
-  domain  = "vpc.private"
+  domain = "vpc.private"
   a_records = {
     kubernetes = [split(":", trimprefix(module.cce.cluster_private_ip, "https://"))[0]]
   }
@@ -65,10 +64,10 @@ module "private_dns" {
 
 module "public_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
-  version = "6.1.1"
+  version = "7.1.0"
 
-  domain  = var.domain_name
-  email   = var.email
+  domain = var.domain_name
+  email  = var.email
   a_records = {
     (var.domain_name) = [module.loadbalancer.elb_public_ip]
     admin             = [module.loadbalancer.elb_public_ip]

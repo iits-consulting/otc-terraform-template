@@ -20,6 +20,12 @@ resource "helm_release" "traefik" {
         ]
       }
       ingressRoute = {
+        dashboard = {
+          middlewares = [{
+            name      = "oidc-forward-auth"
+            namespace = "routing"
+          }]
+        }
         healthcheck = {
           enabled = true
         }
@@ -41,11 +47,15 @@ resource "helm_release" "traefik" {
 }
 
 
+resource opentelekomcloud_identity_credential_v3 cert_manager_ak_sk {
+  user_id = var.otc_user_id
+}
+
 resource "helm_release" "cert-manager" {
   name                  = "cert-manager"
   chart                 = "cert-manager"
   repository            = "https://charts.iits.tech"
-  version               = "1.0.1"
+  version               = "1.14.5"
   namespace             = "cert-manager"
   create_namespace      = true
   wait                  = true
@@ -60,8 +70,8 @@ resource "helm_release" "cert-manager" {
         email = var.email
         otcDNS = {
           region    = var.region
-          accessKey = var.cert_manager_access_key
-          secretKey = var.cert_manager_secret_key
+          accessKey = opentelekomcloud_identity_credential_v3.cert_manager_ak_sk.access
+          secretKey = opentelekomcloud_identity_credential_v3.cert_manager_ak_sk.secret
         }
       }
     })

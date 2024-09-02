@@ -36,11 +36,6 @@ resource "helm_release" "traefik" {
           "--entryPoints.web.forwardedHeaders.trustedIPs=100.125.0.0/16",
           "--entryPoints.websecure.forwardedHeaders.trustedIPs=100.125.0.0/16",
         ]
-        service = {
-          annotations = {
-            "kubernetes.io/elb.id" = data.terraform_remote_state.infrastructure.outputs.elb["id"]
-          }
-        }
       }
     })
   ]

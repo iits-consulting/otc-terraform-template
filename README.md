@@ -96,6 +96,13 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 Congrats your infrastructure is working properly
 
+## Add the CRDS
+
+Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
+
+- Go into the folder ./otc-cloud/dev/crds
+- Execute a `terraform init` and `terraform apply --auto-approve`
+
 ## Bootstrap ArgoCD
 
 Now we want to bring some life into our cluster. 

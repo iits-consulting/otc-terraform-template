@@ -2,7 +2,7 @@ resource "helm_release" "traefik" {
   name                  = "traefik"
   chart                 = "traefik"
   repository            = "https://charts.iits.tech"
-  version               = "28.2.0"
+  version               = "31.1.1"
   namespace             = "routing"
   create_namespace      = true
   wait                  = true

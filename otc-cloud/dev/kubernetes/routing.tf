@@ -55,7 +55,7 @@ resource "helm_release" "cert-manager" {
   name                  = "cert-manager"
   chart                 = "cert-manager"
   repository            = "https://charts.iits.tech"
-  version               = "1.14.5"
+  version               = "1.16.1"
   namespace             = "cert-manager"
   create_namespace      = true
   wait                  = true

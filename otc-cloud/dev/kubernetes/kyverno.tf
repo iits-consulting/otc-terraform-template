@@ -2,7 +2,7 @@ resource "helm_release" "kyverno" {
   wait_for_jobs         = true
   name                  = "kyverno"
   repository            = "https://charts.iits.tech"
-  version               = "2.1.0"
+  version               = "2.2.2"
   chart                 = "kyverno"
   namespace             = "kyverno"
   create_namespace      = true

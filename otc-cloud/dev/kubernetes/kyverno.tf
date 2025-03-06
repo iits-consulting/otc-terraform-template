@@ -27,7 +27,7 @@ resource "helm_release" "kyverno" {
       autoInjectDockerPullSecrets = {
         secrets = {
           dockerhub = {
-            username = var.dockerhub_username
+            username         = var.dockerhub_username
             registryUrl      = "docker.io"
             registryWildcard = "*"
           }

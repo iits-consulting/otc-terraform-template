@@ -7,7 +7,7 @@ resource "random_password" "basic_auth_password" {
 }
 
 resource "helm_release" "argocd" {
-  depends_on = [helm_release.cce_storage_classes]
+  depends_on            = [helm_release.cce_storage_classes]
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
   chart                 = "argocd"
@@ -47,7 +47,7 @@ resource "helm_release" "argocd" {
           }
         }
       }
-    }
+      }
     )
   ]
 }

@@ -1,9 +1,9 @@
 data "terraform_remote_state" "infrastructure" {
   backend = "s3"
   config = {
-    bucket                      = "${var.context}-${var.stage}-tfstate"
-    key                         = "tfstate-infrastructure"
-    region                      = var.region
+    bucket = "${var.context}-${var.stage}-tfstate"
+    key    = "tfstate-infrastructure"
+    region = var.region
     endpoints = {
       s3 = "https://obs.${var.region}.otc.t-systems.com"
     }
@@ -34,18 +34,6 @@ variable "stage" {
   description = "Project stage for resource naming and tagging."
 }
 
-variable "dockerhub_username" {
-  type        = string
-  description = "Username of Docker Registry Credentials for ArgoCD"
-  sensitive   = true
-}
-
-variable "dockerhub_password" {
-  type        = string
-  description = "Password of Docker Registry Credentials for ArgoCD"
-  sensitive   = true
-}
-
 variable "git_token" {
   type        = string
   description = "Git Access Token for ArgoCD"
@@ -55,11 +43,11 @@ variable "git_token" {
 variable "argocd_bootstrap_project_url" {
   type        = string
   description = "Link to the git project where the ArgoCD infrastructure Apps are stored"
-  default = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
+  default     = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
 }
 
 variable "argocd_bootstrap_project_branch" {
-  type = string
+  type        = string
   description = "Your branch which you are working on"
 }
 
@@ -79,6 +67,18 @@ variable "ak_sk_security_token" {
 }
 
 variable "otc_user_id" {
-  type = string
+  type        = string
   description = "Id of the username we need it to create a temp AK/SK for cert-manager"
+}
+
+variable "dockerhub_username" {
+  type        = string
+  description = "Username of Docker Registry Credentials for ArgoCD"
+  sensitive   = true
+}
+
+variable "dockerhub_password" {
+  type        = string
+  description = "Password of Docker Registry Credentials for ArgoCD"
+  sensitive   = true
 }

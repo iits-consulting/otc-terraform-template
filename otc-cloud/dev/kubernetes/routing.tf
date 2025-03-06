@@ -2,7 +2,7 @@ resource "helm_release" "traefik" {
   name                  = "traefik"
   chart                 = "traefik"
   repository            = "https://charts.iits.tech"
-  version               = "28.2.0"
+  version               = "32.1.1"
   namespace             = "routing"
   create_namespace      = true
   wait                  = true
@@ -19,18 +19,19 @@ resource "helm_release" "traefik" {
           "*.${var.domain_name}",
         ]
       }
-      ingressRoute = {
-        dashboard = {
-          middlewares = [{
-            name      = "oidc-forward-auth"
-            namespace = "routing"
-          }]
-        }
-        healthcheck = {
-          enabled = true
-        }
-      }
       traefik = {
+        ingressRoute = {
+          dashboard = {
+            matchRule = "Host(`admin.${var.domain_name}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
+            middlewares = [{
+              name      = "oidc-forward-auth"
+              namespace = "routing"
+            }]
+          }
+          healthcheck = {
+            enabled = true
+          }
+        }
         additionalArguments = [
           "--ping",
           "--entryPoints.web.forwardedHeaders.trustedIPs=100.125.0.0/16",
@@ -47,7 +48,7 @@ resource "helm_release" "traefik" {
 }
 
 
-resource opentelekomcloud_identity_credential_v3 cert_manager_ak_sk {
+resource "opentelekomcloud_identity_credential_v3" "cert_manager_ak_sk" {
   user_id = var.otc_user_id
 }
 

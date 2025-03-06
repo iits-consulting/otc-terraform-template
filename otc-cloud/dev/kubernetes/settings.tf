@@ -3,6 +3,7 @@ terraform {
 
   //TODO Add backend config S3 here
 
+
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"

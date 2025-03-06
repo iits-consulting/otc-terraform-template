@@ -51,3 +51,10 @@ build
 **/requirements.lock
 
 ./my-secrets.sh
+**/basic-auth-password.txt
+
+#Ignore Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+**/errored.tfstate
+

@@ -1,5 +1,5 @@
 terraform {
-  required_version = "v1.9.0"
+  required_version = "v1.11.2"
 
   //TODO Add backend config S3 here
 

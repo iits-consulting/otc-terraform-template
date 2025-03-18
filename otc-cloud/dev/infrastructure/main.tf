@@ -1,6 +1,6 @@
 module "vpc" {
   source             = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/vpc"
-  version            = "7.1.0"
+  version            = "7.4.1"
   name               = "${var.context}-${var.stage}-vpc"
   cidr_block         = var.vpc_cidr
   tags               = local.tags
@@ -8,7 +8,7 @@ module "vpc" {
 
 module "snat" {
   source      = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/snat"
-  version     = "7.1.0"
+  version     = "7.4.1"
   name_prefix = "${var.context}-${var.stage}"
   subnet_id   = module.vpc.subnets["kubernetes-subnet"].id
   vpc_id      = module.vpc.vpc.id
@@ -17,7 +17,7 @@ module "snat" {
 
 module "cce" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/cce"
-  version = "7.1.0"
+  version = "7.4.1"
 
   name                           = "${var.context}-${var.stage}"
   cluster_vpc_id                 = module.vpc.vpc.id
@@ -44,7 +44,7 @@ module "cce" {
 
 module "loadbalancer" {
   source       = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/loadbalancer"
-  version      = "7.1.0"
+  version      = "7.4.1"
   context_name = var.context
   subnet_id    = module.vpc.subnets["kubernetes-subnet"].subnet_id
   stage_name   = var.stage
@@ -53,7 +53,7 @@ module "loadbalancer" {
 
 module "private_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/private_dns"
-  version = "7.1.0"
+  version = "7.4.1"
 
   domain = "vpc.private"
   a_records = {
@@ -64,7 +64,7 @@ module "private_dns" {
 
 module "public_dns" {
   source  = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/public_dns"
-  version = "7.1.0"
+  version = "7.4.1"
 
   domain = var.domain_name
   email  = var.email

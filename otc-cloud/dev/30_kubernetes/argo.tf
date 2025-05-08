@@ -38,7 +38,7 @@ resource "helm_release" "argocd" {
             # Set this to enable stage $STAGE-values.yaml
             stage             = var.stage
             rootDomain        = var.domain_name
-            basicAuthPassword = random_password.basic_auth_password.result
+            basicAuthPassword = var.admin_website_password
           }
           git = {
             password = var.git_token
@@ -49,9 +49,4 @@ resource "helm_release" "argocd" {
       }
     })
   ]
-}
-
-resource "local_file" "basic_auth_password" {
-  filename = "basic-auth-password.txt"
-  content  = "The basic auth credentials for the admin domain are username=admin and password=${random_password.basic_auth_password.result}"
 }

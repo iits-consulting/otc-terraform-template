@@ -74,6 +74,11 @@ variable "otc_user_id" {
   description = "Id of the username we need it to create a temp AK/SK for cert-manager"
 }
 
+variable "admin_website_password" {
+  type = string
+  description = "Password for the admin website"
+}
+
 locals {
   chart_versions = {
     traefik             = "35.2.0"

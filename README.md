@@ -139,15 +139,9 @@ argo
 
 After some minutes argocd is also available over your domain like this: https://admin.${TF_VAR_context}.iits.tech
 
-## Save the basic auth credentials
-
-Inside otc-cloud/dev/kubernetes you see there is now a new file which is called *basic-auth-password.txt*
-Inside this file you will find the credentials to be able to access your page.
-
 ## Go over to Argo and deploy some services
 
 We are finished with the terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
-
 
 ## Do the workshop on your tenant 
 

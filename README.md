@@ -39,13 +39,23 @@ The following services we will deploy later
   * Click on _Code_
   * Clone the repository 
 
+2. Next step is to create a fork for the ArgoCD project. Please go to this link: https://github.com/iits-consulting/otc-infrastructure-charts-template
+* Click on _Use this template_
+* Click on _Create a new repository_
+    * choose a repository name
+    * select _Private_ repository
+  
+3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
+    * Click [here](https://github.com/settings/tokens?type=beta) to do that
+    * Select _Only select repositories_ and choose your fork of the infrastructure-charts
+    * Permissions
+        * Contents -> Read-Only
+        * Commit Status -> Read-Only
+      
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)
-5. Docker Account 
-   * To avoid the [docker rate limit problem](https://docs.docker.com/docker-hub/download-rate-limit/#:~:text=Docker%20Hub%20limits%20the%20number,pulls%20per%206%20hour%20period) you need to create a docker.io account first or use your existing credentials/token. 
-       If you don't have a docker account you can create a free one [here](https://hub.docker.com/signup/)
-6. Adjust the .envrc and my-secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+5. Adjust the .envrc and my-secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 
@@ -74,13 +84,16 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 ## Execute Terraform for infrastructure
 
 1. Switch into the folder otc-cloud/dev/infrastructure
-1. Now take a look at the main.tf and try to understand what we want to set up
+2. Now take a look at the main.tf and try to understand what we want to set up
     - (Optional) Add or remove some modules from main.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
        - It will take like 10-15 Minutes till everything is up
 
 ## Validate your setup is up and running
+
+Source first the stage-dependent-env.sh
+
   * Check Kubernetes
     * with terraform we fetched already the kube config
     * execute inside your cli the following command:

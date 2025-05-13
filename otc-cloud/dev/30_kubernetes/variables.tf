@@ -69,9 +69,9 @@ variable "ak_sk_security_token" {
   description = "Security Token for temporary AK/SK"
 }
 
-variable "otc_username" {
+variable "otc_user_id" {
   type        = string
-  description = "Username for the IAM user. Used to create a temp AK/SK for cert-manager"
+  description = "User ID for the IAM user. Used to create a temp AK/SK for cert-manager"
 }
 
 variable "admin_website_password" {

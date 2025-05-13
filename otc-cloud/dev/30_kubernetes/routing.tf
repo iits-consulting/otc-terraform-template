@@ -45,12 +45,8 @@ resource "helm_release" "traefik" {
   depends_on = [helm_release.kyverno]
 }
 
-data "opentelekomcloud_identity_user_v3" "cert_manager_user" {
-  name = var.otc_username
-}
-
 resource "opentelekomcloud_identity_credential_v3" "cert_manager_ak_sk" {
-  user_id = data.opentelekomcloud_identity_user_v3.cert_manager_user.id
+  user_id = var.otc_user_id
 }
 
 resource "helm_release" "cert_manager" {

@@ -10,10 +10,11 @@ terraform {
     }
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
-      version = ">=1.35.6"
+      version = "~> 1.36"
     }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
+      version = "~> 2.17"
     }
   }
 }

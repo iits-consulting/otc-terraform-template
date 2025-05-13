@@ -61,7 +61,7 @@ The following services we will deploy later
 
 ## Create the kubernetes cluster and other infrastructure components
 
-First navigate to the directory otc-cloud
+First navigate to the directory otc-cloud/dev/
 
 ### Create Terraform state bucket
 
@@ -111,15 +111,15 @@ Congrats, your infrastructure is working properly!
 
 Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
 
-- Go into the folder ./otc-cloud/dev/crds
-- Execute a `terraform init` and `terraform apply --auto-approve`
+- Go into the folder ./otc-cloud/dev/10_crds
+- Execute a `terraform init` and `terraform apply`
 
 ## Bootstrap ArgoCD
 
 Now we want to bring some life into our cluster. 
 For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
-- Go into the folder ./otc-cloud/dev/kubernetes
+- Go into the folder ./otc-cloud/dev/30_kubernetes
 - Repeat the steps from this point again [here](#create-terraform-state-bucket)
 - Take a look at the _argo.tf_ and try to understand what we want to achieve
 - Execute Terraform init and apply

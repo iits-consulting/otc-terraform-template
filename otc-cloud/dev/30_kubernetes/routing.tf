@@ -2,15 +2,16 @@ resource "helm_release" "traefik" {
   name                  = "traefik"
   chart                 = "traefik"
   repository            = "https://charts.iits.tech"
-  version               = "35.2.0"
+  version               = local.chart_versions.traefik
   namespace             = "routing"
   create_namespace      = true
   wait                  = true
   atomic                = true
-  timeout               = 300
+  timeout               = 900
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
+
   values = [
     yamlencode({
       defaultCert = {
@@ -24,7 +25,7 @@ resource "helm_release" "traefik" {
           dashboard = {
             matchRule = "Host(`admin.${var.domain_name}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
             middlewares = [{
-              name      = "oidc-forward-auth"
+              name      = "basic-auth"
               namespace = "routing"
             }]
           }
@@ -32,19 +33,16 @@ resource "helm_release" "traefik" {
             enabled = true
           }
         }
-        additionalArguments = [
-          "--ping",
-          "--entryPoints.web.forwardedHeaders.trustedIPs=100.125.0.0/16",
-          "--entryPoints.websecure.forwardedHeaders.trustedIPs=100.125.0.0/16",
-        ]
         service = {
           annotations = {
-            "kubernetes.io/elb.id" = data.terraform_remote_state.infrastructure.outputs.elb["id"]
+            "kubernetes.io/elb.id"                    = data.terraform_remote_state.infrastructure.outputs.elb["id"]
+            "kubernetes.io/elb.transparent-client-ip" = "true"
           }
         }
       }
     })
   ]
+  depends_on = [helm_release.kyverno]
 }
 
 

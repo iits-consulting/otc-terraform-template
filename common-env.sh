@@ -2,7 +2,6 @@ source ./secrets.sh
 
 export TF_VAR_email="replace_me@iits-consulting.de" # example: mymail@mail.de
 export TF_VAR_context="REPLACE_ME" # See E-Mail with credentials (TF_VAR_context)
-export TF_VAR_dockerhub_username="iits"
 
 #informations from the credentials e-mail
 export OS_DOMAIN_NAME="REPLACE_ME" # See E-Mail with credentials (OS_DOMAIN_NAME)

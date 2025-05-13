@@ -73,3 +73,13 @@ variable "otc_user_id" {
   type        = string
   description = "Id of the username we need it to create a temp AK/SK for cert-manager"
 }
+
+locals {
+  chart_versions = {
+    traefik             = "35.2.0"
+    cert-manager        = "1.17.2"
+    otc_storage_classes = "2.0.2"
+    argocd              = "16.3.2"
+    kyverno             = "2.4.0"
+  }
+}

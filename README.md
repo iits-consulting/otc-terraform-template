@@ -26,7 +26,7 @@ The following services we will deploy later
 
 ## Tools Requirements (not necessary if you use KASM)
 
-* Install Terraform in the Version 1.4.6 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
+* Install Terraform in the Version 1.9.0 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)

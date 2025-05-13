@@ -55,9 +55,9 @@ The following services we will deploy later
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)
-5. Adjust the common-env.sh and secrets.sh file. The common-env.sh is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
-   * source the updated common-env.sh file like this "source common-env.sh"
+   * source the updated .envrc file like this "source .envrc"
 
 ## Create the kubernetes cluster and other infrastructure components
 
@@ -92,22 +92,20 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 ## Validate your setup is up and running
 
-Source first the.envrc in otc-cloud/dev/ 
-
   * Check Kubernetes
-    * with terraform we fetched already the kube config
-    * execute inside your cli the following command:
+    * via terraform, we've already fetched the kube config
+    * execute the following command inside your cli:
       ```shell
       kubectl get nodes
       ```
   * Check DNS
-    * execute inside your cli the following command:
+    * execute the following command inside your cli:
     ```shell
     nslookup $TF_VAR_domain_name 
     ```
-    * It should point to some 80.*.*.* Address
+    * It should point to an address similar to `80.*.*.*` 
 
-Congrats your infrastructure is working properly
+Congrats, your infrastructure is working properly!
 
 ## Add the CRDS
 

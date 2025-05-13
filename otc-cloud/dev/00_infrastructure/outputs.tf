@@ -24,6 +24,6 @@ output "elb" {
 resource "null_resource" "get_kube_config" {
   depends_on = [module.cce]
   provisioner "local-exec" {
-    command = "../.envrc"
+    command = "otc-auth cce get-kube-config"
   }
 }

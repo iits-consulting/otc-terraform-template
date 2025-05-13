@@ -11,6 +11,7 @@ export TF_VAR_otc_user_id="REPLACE_ME" # See E-Mail with credentials (OTC_USER_I
 export TF_VAR_region="eu-de"
 export REGION=$TF_VAR_region
 export TF_VAR_domain_name="${TF_VAR_context}.iits.tech"
+export TF_VAR_stage="dev"
 
 # OTC auth
 otc-auth login iam -o

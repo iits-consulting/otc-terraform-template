@@ -48,7 +48,7 @@ variable "git_token" {
   sensitive   = true
 }
 
-variable "argocd_bootstrap_project_url" {
+variable "argocd_repo_url" {
   type        = string
   description = "URL to the git project where the ArgoCD infrastructure Apps are stored"
   default     = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
@@ -69,13 +69,13 @@ variable "ak_sk_security_token" {
   description = "Security Token for temporary AK/SK"
 }
 
-variable "otc_user_id" {
+variable "otc_username" {
   type        = string
-  description = "Id of the username we need it to create a temp AK/SK for cert-manager"
+  description = "Username for the IAM user. Used to create a temp AK/SK for cert-manager"
 }
 
 variable "admin_website_password" {
-  type = string
+  type        = string
   description = "Password for the admin website"
 }
 

@@ -1,13 +1,4 @@
-resource "random_password" "basic_auth_password" {
-  length      = 32
-  special     = false
-  min_lower   = 1
-  min_numeric = 1
-  min_upper   = 1
-}
-
 resource "helm_release" "argocd" {
-  depends_on            = [helm_release.cce_storage_classes]
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
   chart                 = "argocd"
@@ -42,11 +33,12 @@ resource "helm_release" "argocd" {
           }
           git = {
             password = var.git_token
-            repoUrl  = var.argocd_bootstrap_project_url
+            repoUrl  = var.argocd_repo_url
             branch   = "main"
           }
         }
       }
     })
   ]
+  depends_on = [helm_release.otc_storage_classes]
 }

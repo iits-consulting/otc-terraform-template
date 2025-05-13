@@ -12,7 +12,7 @@ module "snat" {
   name_prefix   = "${var.context}-${var.stage}"
   subnet_id     = module.vpc.subnets["kubernetes-subnet"].id
   vpc_id        = module.vpc.vpc.id
-  network_cidrs = [local.vpc_cidr]
+  network_cidrs = [var.vpc_cidr]
 }
 
 module "cce" {

@@ -1,4 +1,4 @@
-source ./my-secrets.sh
+source ./secrets.sh
 
 export TF_VAR_email="workshop-user@iits-consulting.de" # example: mymail@mail.de
 export TF_VAR_context="REPLACE_ME" # See E-Mail with credentials (TF_VAR_context)

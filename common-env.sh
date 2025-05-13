@@ -1,8 +1,7 @@
 source ./secrets.sh
 
-export TF_VAR_email="workshop-user@iits-consulting.de" # example: mymail@mail.de
-export TF_VAR_context="REPLACE_ME" # See E-Mail with credentials (TF_VAR_context)
-export TF_VAR_git_registry_username="workshop-user"
+export TF_VAR_email="can.aykin@iits-consulting.de" # example: mymail@mail.de
+export TF_VAR_context="sanur" # See E-Mail with credentials (TF_VAR_context)
 export TF_VAR_dockerhub_username="iits"
 
 #informations from the credentials e-mail

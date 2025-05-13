@@ -1,26 +1,18 @@
-NO_COLOR='\033[0m'
-YELLOW='\033[0;33m'
+source ./my-secrets.sh
 
 export TF_VAR_email="workshop-user@iits-consulting.de" # example: mymail@mail.de
-
 export TF_VAR_context="REPLACE_ME" # See E-Mail with credentials (TF_VAR_context)
-
 export TF_VAR_git_registry_username="workshop-user"
-
 export TF_VAR_dockerhub_username="iits"
 
 #informations from the credentials e-mail
 export OS_DOMAIN_NAME="REPLACE_ME" # See E-Mail with credentials (OS_DOMAIN_NAME)
 export OS_PROJECT_NAME="eu-de_${TF_VAR_context}" # See E-Mail with credentials (OS_PROJECT_NAME)
-export OS_USERNAME="REPLACE_ME" # See E-Mail with credentials (OS_USERNAME)
 export TF_VAR_otc_user_id="REPLACE_ME" # See E-Mail with credentials (OTC_USER_ID)
 
 export TF_VAR_region="eu-de"
 export REGION=$TF_VAR_region
-export TF_VAR_stage="dev"
 export TF_VAR_domain_name="${TF_VAR_context}.iits.tech"
-
-source ./my-secrets.sh
 
 # OTC auth
 otc-auth login iam -o
@@ -34,3 +26,5 @@ rm ./ak-sk-env.sh
 
 unset OS_USERNAME
 unset OS_PASSWORD
+
+export TF_VAR_argocd_bootstrap_project_url="https://github.com/iits-consulting/otc-infrastructure-charts-template.git"

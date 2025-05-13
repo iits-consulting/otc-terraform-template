@@ -1,9 +1,9 @@
 data "terraform_remote_state" "infrastructure" {
   backend = "s3"
   config = {
-    bucket                      = "${var.context}-${var.stage}-tfstate"
-    key                         = "tfstate-infrastructure"
-    region                      = var.region
+    bucket = "${var.context}-${var.stage}-tfstate"
+    key    = "tfstate-infrastructure"
+    region = var.region
     endpoints = {
       s3 = "https://obs.${var.region}.otc.t-systems.com"
     }
@@ -18,10 +18,6 @@ variable "region" {
   type        = string
   description = "OTC region for the project: eu-de(default) or eu-nl"
   default     = "eu-de"
-  validation {
-    condition     = contains(["eu-de", "eu-nl"], var.region)
-    error_message = "Currently only this regions are supported: \"eu-de\", \"eu-nl\"."
-  }
 }
 
 variable "context" {
@@ -54,8 +50,8 @@ variable "git_token" {
 
 variable "argocd_bootstrap_project_url" {
   type        = string
-  description = "Link to the git project where the ArgoCD infrastructure Apps are stored"
-  default = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
+  description = "URL to the git project where the ArgoCD infrastructure Apps are stored"
+  default     = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
 }
 
 variable "domain_name" {
@@ -74,6 +70,6 @@ variable "ak_sk_security_token" {
 }
 
 variable "otc_user_id" {
-  type = string
+  type        = string
   description = "Id of the username we need it to create a temp AK/SK for cert-manager"
 }

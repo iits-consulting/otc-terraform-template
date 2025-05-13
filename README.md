@@ -55,13 +55,13 @@ The following services we will deploy later
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)
-5. Adjust the .envrc and my-secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+5. Adjust the common-env.sh and secrets.sh file. The common-env.sh is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
-   * source the updated .envrc file like this "source .envrc"
+   * source the updated common-env.sh file like this "source common-env.sh"
 
 ## Create the kubernetes cluster and other infrastructure components
 
-First go into the folder otc-cloud/dev
+First navigate to the directory otc-cloud
 
 ### Create Terraform state bucket
 
@@ -74,7 +74,7 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
       ```
 3. Execute
       ```shell
-      terraform apply --auto-approve
+      terraform apply
       ```
 4. Wait for completion
 5. After completion we should get a output which looks like this:
@@ -83,7 +83,7 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 ## Execute Terraform for infrastructure
 
-1. Switch into the folder otc-cloud/dev/infrastructure
+1. Switch into the folder otc-cloud/dev/00_infrastructure
 2. Now take a look at the main.tf and try to understand what we want to set up
     - (Optional) Add or remove some modules from main.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
@@ -92,7 +92,7 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 ## Validate your setup is up and running
 
-Source first the stage-dependent-env.sh
+Source first the.envrc in otc-cloud/dev/ 
 
   * Check Kubernetes
     * with terraform we fetched already the kube config

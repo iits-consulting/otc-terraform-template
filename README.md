@@ -84,8 +84,8 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 ## Execute Terraform for infrastructure
 
 1. Switch into the folder otc-cloud/dev/00_infrastructure
-2. Now take a look at the main.tf and try to understand what we want to set up
-    - (Optional) Add or remove some modules from main.tf if you like
+2. Now take a look at the infra.tf and try to understand what we want to set up
+    - (Optional) Add or remove some modules from infra.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
        - It will take like 10-15 Minutes till everything is up

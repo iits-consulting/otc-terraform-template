@@ -22,8 +22,8 @@ variable "ak_sk_security_token" {
 locals {
   tf_state_bucket_name = "${var.context}-${var.stage}-tfstate"
   terraform_paths = [
-    "infrastructure",
-    "crds",
-    "kubernetes"
+    "00_infrastructure",
+    "10_crds",
+    "30_kubernetes"
   ]
 }

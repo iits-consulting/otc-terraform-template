@@ -1,29 +1,30 @@
 resource "helm_release" "kyverno" {
-  wait_for_jobs         = true
   name                  = "kyverno"
   repository            = "https://charts.iits.tech"
-  version               = "2.4.0"
+  version               = local.chart_versions.kyverno
   chart                 = "kyverno"
   namespace             = "kyverno"
   create_namespace      = true
   wait                  = true
   atomic                = true
-  timeout               = 300 // 5 Minutes
+  timeout               = 900 // 15 Minutes
   render_subchart_notes = true
   dependency_update     = true
-  skip_crds             = true
+  wait_for_jobs         = true
+  skip_crds             = false
 
   set_sensitive {
     name  = "autoInjectDockerPullSecrets.secrets.dockerhub.password"
     value = var.dockerhub_password
   }
-
   values = [
     yamlencode({
       ingress = {
         host = "admin.${var.domain_name}"
       }
-
+      enforceSecurityContext = {
+        enabled = false
+      }
       autoInjectDockerPullSecrets = {
         secrets = {
           dockerhub = {
@@ -35,6 +36,4 @@ resource "helm_release" "kyverno" {
       }
     })
   ]
-
-  depends_on = [helm_release.cce_storage_classes]
 }

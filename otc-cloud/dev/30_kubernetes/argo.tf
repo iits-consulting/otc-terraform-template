@@ -1,13 +1,4 @@
-resource "random_password" "basic_auth_password" {
-  length      = 32
-  special     = false
-  min_lower   = 1
-  min_numeric = 1
-  min_upper   = 1
-}
-
 resource "helm_release" "argocd" {
-  depends_on            = [helm_release.cce_storage_classes]
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
   chart                 = "argocd"
@@ -38,21 +29,16 @@ resource "helm_release" "argocd" {
             # Set this to enable stage $STAGE-values.yaml
             stage             = var.stage
             rootDomain        = var.domain_name
-            basicAuthPassword = random_password.basic_auth_password.result
+            basicAuthPassword = var.admin_website_password
           }
           git = {
             password = var.git_token
-            repoUrl  = var.argocd_bootstrap_project_url
+            repoUrl  = var.argocd_repo_url
             branch   = "main"
           }
         }
       }
-      }
-    )
+    })
   ]
-}
-
-resource "local_file" "basic_auth_password" {
-  filename = "basic-auth-password.txt"
-  content  = "The basic auth credentials for the admin domain are username=admin and password=${random_password.basic_auth_password.result}"
+  depends_on = [helm_release.otc_storage_classes]
 }

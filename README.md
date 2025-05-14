@@ -26,7 +26,7 @@ The following services we will deploy later
 
 ## Tools Requirements (not necessary if you use KASM)
 
-* Install Terraform in the Version 1.4.6 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
+* Install Terraform in the Version 1.9.0 We would recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
 * Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need to it to be able to login over CLI and getting the kube config
 * A proper Shell. If you are using Windows please use GitBash
 * [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
@@ -55,13 +55,13 @@ The following services we will deploy later
 4. You should have got an E-Mail with your credentials the format looks like this
 
    ![credentials.png](documentation%2Fcredentials.png)
-5. Adjust the .envrc and my-secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
+5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
    * replace all "REPLACE_ME" Placeholder with the correct values
    * source the updated .envrc file like this "source .envrc"
 
 ## Create the kubernetes cluster and other infrastructure components
 
-First go into the folder otc-cloud/dev
+First navigate to the directory otc-cloud/dev/
 
 ### Create Terraform state bucket
 
@@ -74,7 +74,7 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
       ```
 3. Execute
       ```shell
-      terraform apply --auto-approve
+      terraform apply
       ```
 4. Wait for completion
 5. After completion we should get a output which looks like this:
@@ -83,46 +83,43 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 ## Execute Terraform for infrastructure
 
-1. Switch into the folder otc-cloud/dev/infrastructure
-2. Now take a look at the main.tf and try to understand what we want to set up
-    - (Optional) Add or remove some modules from main.tf if you like
+1. Switch into the folder otc-cloud/dev/00_infrastructure
+2. Now take a look at the infra.tf and try to understand what we want to set up
+    - (Optional) Add or remove some modules from infra.tf if you like
         - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
    - Execute Terraform init and apply
        - It will take like 10-15 Minutes till everything is up
 
 ## Validate your setup is up and running
 
-Source first the stage-dependent-env.sh
-
   * Check Kubernetes
-    * with terraform we fetched already the kube config
-    * execute inside your cli the following command:
+    * via terraform, we've already fetched the kube config
+    * execute the following command inside your cli:
       ```shell
       kubectl get nodes
       ```
   * Check DNS
-    * execute inside your cli the following command:
+    * execute the following command inside your cli:
     ```shell
     nslookup $TF_VAR_domain_name 
     ```
-    * It should point to some 80.*.*.* Address
+    * It should point to an address similar to `80.*.*.*` 
 
-Congrats your infrastructure is working properly
+Congrats, your infrastructure is working properly!
 
 ## Add the CRDS
 
 Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
 
-- Go into the folder ./otc-cloud/dev/crds
-- Execute a `terraform init` and `terraform apply --auto-approve`
+- Go into the folder ./otc-cloud/dev/10_crds
+- Execute a `terraform init` and `terraform apply`
 
 ## Bootstrap ArgoCD
 
 Now we want to bring some life into our cluster. 
 For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
-- Go into the folder ./otc-cloud/dev/kubernetes
-- Repeat the steps from this point again [here](#create-terraform-state-bucket)
+- Go into the folder ./otc-cloud/dev/30_kubernetes
 - Take a look at the _argo.tf_ and try to understand what we want to achieve
 - Execute Terraform init and apply
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
@@ -141,15 +138,9 @@ argo
 
 After some minutes argocd is also available over your domain like this: https://admin.${TF_VAR_context}.iits.tech
 
-## Save the basic auth credentials
-
-Inside otc-cloud/dev/kubernetes you see there is now a new file which is called *basic-auth-password.txt*
-Inside this file you will find the credentials to be able to access your page.
-
 ## Go over to Argo and deploy some services
 
 We are finished with the terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
-
 
 ## Do the workshop on your tenant 
 

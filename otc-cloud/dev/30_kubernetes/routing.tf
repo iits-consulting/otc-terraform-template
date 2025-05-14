@@ -25,7 +25,7 @@ resource "helm_release" "traefik" {
           dashboard = {
             matchRule = "Host(`admin.${var.domain_name}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
             middlewares = [{
-              name      = "basic-auth"
+              name      = "oidc-forward-auth"
               namespace = "routing"
             }]
           }

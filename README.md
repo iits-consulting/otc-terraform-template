@@ -120,7 +120,6 @@ Now we want to bring some life into our cluster.
 For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
 - Go into the folder ./otc-cloud/dev/30_kubernetes
-- Repeat the steps from this point again [here](#create-terraform-state-bucket)
 - Take a look at the _argo.tf_ and try to understand what we want to achieve
 - Execute Terraform init and apply
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished

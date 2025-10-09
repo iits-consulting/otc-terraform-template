@@ -2,8 +2,8 @@
 resource "helm_release" "argocd" {
   name                  = "argocd"
   repository            = "https://charts.iits.tech"
-  chart                 = local.chart_versions.argocd
-  version               = "18.1.0"
+  chart                 = "argocd"
+  version               = local.chart_versions.argocd
   namespace             = "argocd"
   create_namespace      = true
   wait                  = true

@@ -53,8 +53,6 @@ resource "helm_release" "argocd_apps" {
               stage             = var.stage
               rootDomain        = var.domain_name
               basicAuthPassword = var.admin_website_password
-              // TODO: Add to chart
-              context = var.context
             }
           }
           git = {

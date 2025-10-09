@@ -1,6 +1,6 @@
 module "crds" {
-  source     = "iits-consulting/crd-installer/opentelekomcloud/"
-  version    = "7.5.1"
+  source     = "iits-consulting/crd-installer/kubernetes"
+  version    = "v7.5.1"
   apply_only = false
   default_chart_overrides = {
     traefik = {

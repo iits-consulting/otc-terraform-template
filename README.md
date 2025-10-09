@@ -63,7 +63,7 @@ The following services we will deploy later
 
 ## Create the kubernetes cluster and other infrastructure components
 
-First navigate to the directory `otc-cloud/dev/`
+First navigate to the directory `stages/dev/`
 
 ### Create Terraform state bucket
 

@@ -82,9 +82,10 @@ variable "admin_website_password" {
 locals {
   chart_versions = {
     traefik             = "35.2.0"
-    cert-manager        = "1.17.2"
-    otc_storage_classes = "2.0.2"
-    argocd              = "16.3.2"
+    cert-manager        = "1.17.4"
+    cce_storage_classes = "2.0.2"
+    argocd              = "18.1.0"
+    argocd_apps         = "2.0.0"
     kyverno             = "2.4.0"
   }
 }

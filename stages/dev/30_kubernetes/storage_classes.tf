@@ -9,11 +9,11 @@ resource "opentelekomcloud_kms_key_v1" "cce_autoencryption_kms_key" {
   is_enabled      = "true"
 }
 
-resource "helm_release" "otc_storage_classes" {
-  name                  = "otc-storage-classes"
+resource "helm_release" "cce_storage_classes" {
+  name                  = "cce-storage-classes"
   repository            = "https://charts.iits.tech"
-  chart                 = "otc-storage-classes"
-  version               = local.chart_versions.otc_storage_classes
+  chart                 = "cce-storage-classes"
+  version               = local.chart_versions.cce_storage_classes
   namespace             = "storage"
   create_namespace      = true
   wait                  = true

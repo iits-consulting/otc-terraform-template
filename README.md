@@ -142,7 +142,7 @@ After some minutes argocd is also available over your domain like this: https://
 
 ## Go over to Argo and deploy some services
 
-We are finished with the Terraform / Terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
+We are finished with the Terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
 
 ## Do the workshop on your tenant
 

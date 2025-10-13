@@ -25,7 +25,7 @@ The following services we will deploy later
 
 ## Tools Requirements (not necessary if you use KASM)
 
-- Install **OpenTofu** in the version 1.10. To manage different versions of OpenTofu on your machine, we recommend to use the tool [tofuenv](https://github.com/tofuutils/tofuenv?tab=readme-ov-file#tofuenv) (OpenTofu equivalent of [tfenv](https://github.com/tfutils/tfenv))
+- Install **Terraform** in the version **1.9.0**. To manage different versions of Terraform on your machine, we recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
 - Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need it to be able to login over CLI and getting the kube config
 - A proper Shell. If you are using Windows please use GitBash
 - [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
@@ -72,11 +72,11 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 2. Execute
    ```shell
-   tofu init
+   terraform init
    ```
 3. Execute
    ```shell
-   tofu apply
+   terraform apply
    ```
 4. Wait for completion
 5. After completion we should get a output which looks like this:
@@ -89,13 +89,13 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 2. Now take a look at the `infra.tf` and try to understand what we want to set up
    - (Optional) Add or remove some modules from `infra.tf` if you like
      - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
-   - Execute `tofu init` and `tofu apply`
+   - Execute `terraform init` and `terraform apply`
      - It might take up to 15 Minutes until everything is up
 
 ## Validate your setup is up and running
 
 - Check Kubernetes
-  - via OpenTofu, we've already fetched the kube config
+  - via Terraform, we've already fetched the kube config
   - execute the following command inside your cli:
     ```shell
     kubectl get nodes
@@ -114,7 +114,7 @@ Congrats, your infrastructure is working properly!
 Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
 
 - Go into the folder `./otc-cloud/dev/10_crds`
-- Execute a `tofu init` and `tofu apply`
+- Execute a `terraform init` and `terraform apply`
 
 ## Bootstrap ArgoCD
 
@@ -123,7 +123,7 @@ For that we will deploy everything from our Fork from the _Preparation & Require
 
 - Go into the folder `./otc-cloud/dev/30_kubernetes`
 - Take a look at the `argo.tf` and try to understand what we want to achieve
-- Execute a `tofu init` and `tofu apply`
+- Execute a `terraform init` and `terraform apply`
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
 
 ## Access ArgoCD UI
@@ -142,7 +142,7 @@ After some minutes argocd is also available over your domain like this: https://
 
 ## Go over to Argo and deploy some services
 
-We are finished with the Terraform / OpenTofu part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
+We are finished with the Terraform / Terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
 
 ## Do the workshop on your tenant
 

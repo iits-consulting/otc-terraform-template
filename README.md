@@ -123,7 +123,7 @@ For that we will deploy everything from our Fork from the _Preparation & Require
 
 - Go into the folder `./stages/dev/30_kubernetes`
 - Take a look at the `argo.tf` and try to understand what we want to achieve
-- Execute a `terraform init` and `terraform apply`
+- Execute `terraform init` and `terraform apply`
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
 
 ## Access ArgoCD UI

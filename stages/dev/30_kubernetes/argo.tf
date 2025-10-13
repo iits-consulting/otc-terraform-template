@@ -16,8 +16,11 @@ resource "helm_release" "argocd" {
   values = [
     yamlencode({
       argo-cd = {
+        global = {
+          domain = "admin.${var.domain_name}"
+        }
         server = {
-          config = {
+          configs = {
             "oidc.config" = ""
           }
           ingress = {

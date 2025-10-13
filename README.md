@@ -85,7 +85,7 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 ## Execute Terraform for infrastructure
 
-1. Switch into the folder `otc-cloud/dev/00_infrastructure`
+1. Switch into the folder `stages/dev/00_infrastructure`
 2. Now take a look at the `infra.tf` and try to understand what we want to set up
    - (Optional) Add or remove some modules from `infra.tf` if you like
      - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
@@ -113,7 +113,7 @@ Congrats, your infrastructure is working properly!
 
 Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
 
-- Go into the folder `./otc-cloud/dev/10_crds`
+- Go into the folder `./stages/dev/10_crds`
 - Execute a `terraform init` and `terraform apply`
 
 ## Bootstrap ArgoCD
@@ -121,7 +121,7 @@ Before we can add ArgoCD for our cluster we need to add some CRDS to our infrast
 Now we want to bring some life into our cluster.
 For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
 
-- Go into the folder `./otc-cloud/dev/30_kubernetes`
+- Go into the folder `./stages/dev/30_kubernetes`
 - Take a look at the `argo.tf` and try to understand what we want to achieve
 - Execute a `terraform init` and `terraform apply`
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
@@ -133,7 +133,7 @@ First we will access ArgoCD over a kubectl port-forward. To do that execute the 
 ```shell
 # This command will make the argo command available (not necessary if you use KASM)
 source shell-helper.sh
-# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/argocd
+# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/
 # It will print out the Username and the Password on the first line and the browser should open automatically.
 argo
 ```

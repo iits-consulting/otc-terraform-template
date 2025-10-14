@@ -1,6 +1,6 @@
 module "crds" {
-  source     = "registry.terraform.io/iits-consulting/project-factory/opentelekomcloud//modules/crd_installer"
-  version    = "7.4.1"
+  source     = "iits-consulting/crd-installer/kubernetes"
+  version    = "v7.5.1"
   apply_only = false
   default_chart_overrides = {
     traefik = {
@@ -10,10 +10,10 @@ module "crds" {
       version = "2.4.0"
     }
     cert-manager = {
-      version = "1.17.2"
+      version = "1.17.4"
     }
     prometheus-stack = {
-      version = "63.1.0"
+      version = "63.1.4"
     }
   }
 }

@@ -1,5 +1,5 @@
 terraform {
-  required_version = "v1.9.0"
+  required_version = "1.9.0"
 
   //TODO Add backend config S3 here
 
@@ -10,7 +10,7 @@ terraform {
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
-      version = "1.14.0"
+      version = "1.19.0"
     }
   }
 }

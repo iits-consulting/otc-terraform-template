@@ -7,7 +7,7 @@ resource "helm_release" "traefik" {
   create_namespace      = true
   wait                  = true
   atomic                = true
-  timeout               = 900
+  timeout               = 900 // 15 Minutes
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true

@@ -10,9 +10,9 @@ function argo(){
   argoCredentials
 
   if [[ $(uname) == "Linux" ]]; then
-    xdg-open http://localhost:8080/ && kubectl -n argocd port-forward svc/argocd-server 8080:80
+    xdg-open http://localhost:8080/argocd && kubectl -n argocd port-forward svc/argocd-server 8080:80
   else
-    open http://localhost:8080/ && kubectl -n argocd port-forward svc/argocd-server 8080:80
+    open http://localhost:8080/argocd && kubectl -n argocd port-forward svc/argocd-server 8080:80
   fi
 }
 

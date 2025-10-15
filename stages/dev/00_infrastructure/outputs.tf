@@ -22,6 +22,9 @@ output "elb" {
 }
 
 resource "null_resource" "get_kube_config" {
+  triggers = {
+    trigger = timestamp()
+  }
   depends_on = [module.cce]
   provisioner "local-exec" {
     command = "otc-auth cce get-kube-config"

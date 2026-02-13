@@ -22,7 +22,7 @@ module "cce" {
   name                             = "${var.context}-${var.stage}"
   cluster_vpc_id                   = module.vpc.vpc.id
   cluster_subnet_id                = module.vpc.subnets["kubernetes-subnet"].id
-  cluster_version                  = "v1.31"
+  cluster_version                  = "v1.32"
   cluster_high_availability        = var.cluster_config.high_availability
   cluster_enable_scaling           = var.cluster_config.enable_scaling
   cluster_container_network_type   = var.cluster_config.container_network_type

@@ -7,13 +7,13 @@ module "crds" {
       version = "35.2.0"
     }
     kyverno = {
-      version = "2.4.0"
+      version = "3.1.1"
     }
     cert-manager = {
       version = "1.17.4"
     }
     prometheus-stack = {
-      version = "63.1.4"
+      version = "79.8.2"
     }
   }
 }

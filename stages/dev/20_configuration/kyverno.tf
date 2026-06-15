@@ -1,7 +1,7 @@
 resource "helm_release" "kyverno" {
   name                  = "kyverno"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.kyverno
+  version               = var.chart_versions.kyverno
   chart                 = "kyverno"
   namespace             = "kyverno"
   create_namespace      = true

@@ -16,17 +16,25 @@ variable "vpc_cidr" {
 variable "cluster_config" {
   description = "CCE cluster and node pool configuration parameters"
   type = object({
-    enable_scaling         = bool   // Enable autoscaling of the cluster
+    cluster_version        = string // CCE version for the cluster
     high_availability      = bool   // Create the cluster in highly available mode
     container_network_type = string // Container network type: vpc-router or overlay_l2
-    node_os                = string // Node operating system
-    node_flavor            = string // Node specifications in otc flavor format
-    node_storage_type      = string // Type of node storage SATA, SAS or SSD
-    node_storage_size      = number // Size of the node system disk in GB
-    nodes_count            = number // Number of nodes to create
-    nodes_max              = number // Maximum limit of servers to create
     container_cidr         = string // Kubernetes pod network CIDR range
     service_cidr           = string // Kubernetes service network CIDR range
+    cluster_public_access  = bool   // Assign public EIP for the cluster for direct access over the internet
+  })
+}
+
+variable "node_pool_config" {
+  description = "CCE cluster and node pool configuration parameters"
+  type = object({
+    node_pool_os             = string // Node pool operating system
+    node_pool_flavor         = string // Node specifications in otc flavor format
+    node_pool_enable_scaling = bool   // Enable autoscaling of the cluster
+    node_pool_node_count     = number // Number of nodes to create
+    node_pool_node_count_max = number // Maximum number of nodes for scale-out
+    node_pool_storage_type   = string // Type of node storage SATA, SAS or SSD
+    node_pool_storage_size   = string // Size of the node system disk in GB
   })
 }
 
@@ -61,4 +69,3 @@ locals {
     Context = var.context
   }
 }
-

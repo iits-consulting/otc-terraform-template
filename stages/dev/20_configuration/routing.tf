@@ -2,7 +2,7 @@ resource "helm_release" "traefik" {
   name                  = "traefik"
   chart                 = "traefik"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.traefik
+  version               = var.chart_versions.traefik
   namespace             = "routing"
   create_namespace      = true
   wait                  = true
@@ -45,6 +45,12 @@ resource "helm_release" "traefik" {
   depends_on = [helm_release.kyverno]
 }
 
+
+
+data "opentelekomcloud_identity_user_v3" "user_1" {
+  name = var.otc_username
+}
+
 resource "opentelekomcloud_identity_credential_v3" "cert_manager_ak_sk" {
   user_id = var.otc_user_id
 }
@@ -53,7 +59,7 @@ resource "helm_release" "cert_manager" {
   name                  = "cert-manager"
   chart                 = "cert-manager"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.cert-manager
+  version               = var.chart_versions.cert-manager
   namespace             = "cert-manager"
   create_namespace      = true
   wait                  = true

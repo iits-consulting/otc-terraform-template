@@ -13,7 +13,7 @@ resource "helm_release" "cce_storage_classes" {
   name                  = "cce-storage-classes"
   repository            = "https://charts.iits.tech"
   chart                 = "cce-storage-classes"
-  version               = local.chart_versions.cce_storage_classes
+  version               = var.chart_versions.cce_storage_classes
   namespace             = "storage"
   create_namespace      = true
   wait                  = true

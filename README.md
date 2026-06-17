@@ -2,7 +2,7 @@
 
 ## Introduction
 
-During this Workshop/Blueprint you will learn the basics about proper automation of infrastructere and how to bootstrap ArgoCD.
+During this Workshop/Blueprint you will learn the basics about proper automation of infrastructure and how to bootstrap ArgoCD.
 A similar Approach also applies to FluxCD.
 
 If you want to use this setup without attending our workshop please do first the following step
@@ -25,7 +25,7 @@ The following services we will deploy later
 
 ## Tools Requirements (not necessary if you use KASM)
 
-- Install **Terraform** in the version **1.9.0**. To manage different versions of Terraform on your machine, we recommend to use the tool [tfenv](https://github.com/tfutils/tfenv)
+- Install **OpenTofu** in the version **1.10.2**. To manage different versions of OpenTofu on your machine, we recommend to use the tool [tenv](https://github.com/tofuutils/tenv)
 - Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need it to be able to login over CLI and getting the kube config
 - A proper Shell. If you are using Windows please use GitBash
 - [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
@@ -34,7 +34,7 @@ The following services we will deploy later
 
 ## Preparation & Requirements
 
-1. First we will pull the Terraform sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template (not necessary if you use KASM)
+1. First we will pull the OpenTofu sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template (not necessary if you use KASM)
    ![clone-otc-terraform-template.png](documentation%2Fclone-otc-terraform-template.png)
 
 - Click on _Code_
@@ -57,45 +57,46 @@ The following services we will deploy later
 
    ![credentials.png](documentation%2Fcredentials.png)
 
-5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by terraform or by the otc-auth cli tool
-   - replace all "REPLACE_ME" Placeholder with the correct values
+5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by OpenTofu or by the otc-auth cli tool
+   - replace all "REPLACE_ME" placeholders with the correct values
    - source the updated .envrc file like this "source .envrc"
 
 ## Create the kubernetes cluster and other infrastructure components
 
 First navigate to the directory `stages/dev/`
 
-### Create Terraform state bucket
+### Create OpenTofu state bucket
 
-To be able to store the state of terraform somewhere secure, we need first to create a remote tfstate backend.
+To be able to store the state of OpenTofu somewhere secure, we need first to create a remote tfstate backend.
 The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
 
+1. Make sure you are in the folder `stages/dev/`
 2. Execute
    ```shell
-   terraform init
+   tofu init
    ```
 3. Execute
    ```shell
-   terraform apply
+   tofu apply
    ```
 4. Wait for completion
-5. After completion we should get a output which looks like this:
+5. After completion we should get an output which looks like this:
    ![terraform-output-remote-state.png](documentation%2Fterraform-output-remote-state.png)
-6. Copy the output and replace inside the `settings.tf` file the commented out section of the backend with the output
+6. The output prints a ready-to-use `backend "s3"` block and lists every stage `settings.tf` file it belongs in. Copy that block into the section marked with `TODO Add backend config S3 here` in each stage's `settings.tf` (`00_infra/settings.tf` and `20_configuration/settings.tf`).
 
-## Execute Terraform for infrastructure
+## Execute OpenTofu for infrastructure
 
-1. Switch into the folder `stages/dev/00_infrastructure`
-2. Now take a look at the `infra.tf` and try to understand what we want to set up
-   - (Optional) Add or remove some modules from `infra.tf` if you like
-     - Use https://registry.terraform.io/modules/iits-consulting/project-factory/opentelekomcloud/latest
-   - Execute `terraform init` and `terraform apply`
+1. Switch into the folder `stages/dev/00_infra`
+2. Take a look at `cluster.tf`, `network.tf` and `dns.tf` to understand what we set up (the VPC, SNAT, public load balancer, CCE cluster with node pools, and the public/private DNS zones)
+   - The sizing and versions live in `_infra.auto.tfvars` (cluster version, node flavor, availability zones, CIDRs). Adjust them if you like.
+     - See the available modules under https://registry.terraform.io/namespaces/iits-consulting
+   - Execute `tofu init` and `tofu apply`
      - It might take up to 15 Minutes until everything is up
 
 ## Validate your setup is up and running
 
 - Check Kubernetes
-  - via Terraform, we've already fetched the kube config
+  - via OpenTofu, we've already fetched the kube config
   - execute the following command inside your cli:
     ```shell
     kubectl get nodes
@@ -109,21 +110,19 @@ The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket w
 
 Congrats, your infrastructure is working properly!
 
-## Add the CRDS
+## Configure the cluster and bootstrap ArgoCD
 
-Before we can add ArgoCD for our cluster we need to add some CRDS to our infrastructure.
+Now we want to bring some life into our cluster. The `20_configuration` stage bootstraps the cluster platform and then deploys ArgoCD, which takes over everything from our Fork of the _Preparation & Requirements Step 2_.
 
-- Go into the folder `./stages/dev/10_crds`
-- Execute a `terraform init` and `terraform apply`
-
-## Bootstrap ArgoCD
-
-Now we want to bring some life into our cluster.
-For that we will deploy everything from our Fork from the _Preparation & Requirements Step 2_
-
-- Go into the folder `./stages/dev/30_kubernetes`
-- Take a look at the `argo.tf` and try to understand what we want to achieve
-- Execute `terraform init` and `terraform apply`
+- Go into the folder `./stages/dev/20_configuration`
+- Take a look at the `.tf` files to understand what we set up:
+  - `crds.tf` installs the CRDs (cert-manager, Kyverno, Prometheus stack) needed before the corresponding controllers and ArgoCD applications can run
+  - `kyverno.tf` deploys Kyverno (policy engine and image pull secret injection)
+  - `traefik.tf` deploys the Traefik ingress controller wired to the public load balancer
+  - `cert-manager.tf` deploys cert-manager with the OTC DNS cluster issuer for Let's Encrypt certificates
+  - `cce_storage_classes.tf` deploys the CCE storage classes with a KMS-encrypted default
+  - `argo.tf` deploys ArgoCD and the ArgoCD apps that point at your infrastructure-charts fork
+- Execute `tofu init` and `tofu apply`
 - ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
 
 ## Access ArgoCD UI
@@ -142,7 +141,7 @@ After some minutes argocd is also available over your domain like this: https://
 
 ## Go over to Argo and deploy some services
 
-We are finished with the Terraform part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
+We are finished with the OpenTofu part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
 
 ## Do the workshop on your tenant
 

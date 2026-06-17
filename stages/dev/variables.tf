@@ -18,12 +18,3 @@ variable "ak_sk_security_token" {
   type        = string
   description = "Security Token for temporary AK/SK"
 }
-
-locals {
-  tf_state_bucket_name = "${var.context}-${var.stage}-tfstate"
-  terraform_paths = [
-    "00_infrastructure",
-    "10_crds",
-    "30_kubernetes"
-  ]
-}

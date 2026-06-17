@@ -16,7 +16,6 @@ function argo(){
   fi
 }
 
-
 alias kubens='kubectl config set-context --current --namespace '
 alias deleteErrorPods="kubectl delete pods --field-selector status.phase=Failed --all-namespaces"
 alias kubeEnv="kubectl config current-context"

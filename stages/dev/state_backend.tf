@@ -1,10 +1,22 @@
 terraform {
-  required_version = "1.9.0"
+  required_version = "1.10.2"
 
   required_providers {
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
       version = "~> 1.36"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
+    errorcheck = {
+      source  = "iits-consulting/errorcheck"
+      version = "~> 3.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.4"
     }
   }
 }
@@ -15,40 +27,24 @@ provider "opentelekomcloud" {
   security_token = var.ak_sk_security_token
 }
 
-resource "random_id" "kms_key_unique_suffix" {
-  byte_length = 4
-}
-
-resource "opentelekomcloud_kms_key_v1" "remote_state_bucket_kms_key" {
-  key_alias       = "${local.tf_state_bucket_name}-key-${random_id.kms_key_unique_suffix.hex}"
-  key_description = "${local.tf_state_bucket_name} encryption key"
-  pending_days    = 7
-  is_enabled      = "true"
-}
-
-resource "opentelekomcloud_obs_bucket" "remote_state_bucket" {
-  bucket     = local.tf_state_bucket_name
-  acl        = "private"
-  versioning = true
-  server_side_encryption {
-    algorithm  = "kms"
-    kms_key_id = opentelekomcloud_kms_key_v1.remote_state_bucket_kms_key.id
-  }
-  lifecycle {
-    prevent_destroy = true
-  }
+module "state_bucket" {
+  source               = "iits-consulting/state-bucket/opentelekomcloud"
+  version              = "7.4.5"
+  tf_state_bucket_name = "${var.context}-${var.stage}-tfstate"
 }
 
 output "terraform_state_backend_config" {
-  value = [for path in local.terraform_paths : <<EOT
+  value = <<EOT
+Place the following state backend configuration in the section marked with \"TODO Add backend config S3 here\" in files:
+${yamlencode(formatlist("stages/${var.stage}/%s", fileset(path.root, "*/settings.tf")))}
 
-Place this this under otc-cloud/${var.stage}/${path}/settings.tf under TODO !
+##### STATE BACKEND CONFIGURATION #####
     backend "s3" {
-      bucket                      = "${opentelekomcloud_obs_bucket.remote_state_bucket.bucket}"
-      key                         = "tfstate-${split("_", path)[1]}"
-      region                      = "${opentelekomcloud_obs_bucket.remote_state_bucket.region}"
+      bucket                      = "$${var.context}-$${var.stage}-tfstate"
+      key                         = "tfstate-$${split("_", basename(abspath(path.module)))[1]}"
+      region                      = var.region
       endpoints = {
-        s3 = "https://obs.${opentelekomcloud_obs_bucket.remote_state_bucket.region}.otc.t-systems.com"
+        s3 = "https://obs.$${var.region}.otc.t-systems.com"
       }
       skip_region_validation      = true
       skip_credentials_validation = true
@@ -56,5 +52,4 @@ Place this this under otc-cloud/${var.stage}/${path}/settings.tf under TODO !
       skip_s3_checksum            = true
     }
   EOT
-  ]
 }

@@ -1,12 +1,12 @@
 terraform {
-  required_version = "1.9.0"
+  required_version = "1.10.2"
 
   //TODO Add backend config S3 here
 
   required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "2.38.0"
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
     }
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
@@ -14,7 +14,11 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.17"
+      version = "~> 3.1"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "~> 1.19"
     }
   }
 }

@@ -1,7 +1,7 @@
 resource "helm_release" "kyverno" {
   name                  = "kyverno"
   repository            = "https://charts.iits.tech"
-  version               = local.chart_versions.kyverno
+  version               = var.chart_versions.kyverno
   chart                 = "kyverno"
   namespace             = "kyverno"
   create_namespace      = true
@@ -13,14 +13,26 @@ resource "helm_release" "kyverno" {
   wait_for_jobs         = true
   skip_crds             = false
 
-  set_sensitive {
-    name  = "autoInjectDockerPullSecrets.secrets.dockerhub.password"
-    value = var.dockerhub_password
-  }
+  set_sensitive = [for name, value in {
+    "autoInjectDockerPullSecrets.secrets.dockerhub.username" = var.dockerhub_username
+    "autoInjectDockerPullSecrets.secrets.dockerhub.password" = var.dockerhub_password
+    } : {
+    name  = name
+    value = value
+  }]
+
   values = [
     yamlencode({
       ingress = {
         host = "admin.${var.domain_name}"
+        annotations = {
+          "traefik.ingress.kubernetes.io/router.middlewares" = "routing-oidc-forward-auth@kubernetescrd,kyverno-strip-prefix-kyverno@kubernetescrd"
+        }
+      }
+      kyverno = {
+        config = {
+          resourceFiltersIncludeNamespaces = ["kube-system"]
+        }
       }
       enforceSecurityContext = {
         enabled = false
@@ -28,7 +40,6 @@ resource "helm_release" "kyverno" {
       autoInjectDockerPullSecrets = {
         secrets = {
           dockerhub = {
-            username         = var.dockerhub_username
             registryUrl      = "docker.io"
             registryWildcard = "*"
           }
@@ -36,4 +47,5 @@ resource "helm_release" "kyverno" {
       }
     })
   ]
+  depends_on = [module.crds]
 }

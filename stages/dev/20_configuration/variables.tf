@@ -1,19 +1,3 @@
-data "terraform_remote_state" "infrastructure" {
-  backend = "s3"
-  config = {
-    bucket = "${var.context}-${var.stage}-tfstate"
-    key    = "tfstate-infrastructure"
-    region = var.region
-    endpoints = {
-      s3 = "https://obs.${var.region}.otc.t-systems.com"
-    }
-    skip_region_validation      = true
-    skip_credentials_validation = true
-    skip_requesting_account_id  = true
-    skip_s3_checksum            = true
-  }
-}
-
 variable "region" {
   type        = string
   description = "OTC region for the project: eu-de(default) or eu-nl"
@@ -28,6 +12,16 @@ variable "context" {
 variable "stage" {
   type        = string
   description = "Project stage for resource naming and tagging."
+}
+
+variable "email" {
+  description = "E-mail contact address for cert-manager issuer."
+  type        = string
+}
+
+variable "domain_name" {
+  type        = string
+  description = "The public domain name for routing and certificate configuration."
 }
 
 variable "dockerhub_username" {
@@ -51,22 +45,6 @@ variable "git_token" {
 variable "argocd_repo_url" {
   type        = string
   description = "URL to the git project where the ArgoCD infrastructure Apps are stored"
-  default     = "https://github.com/iits-consulting/otc-infrastructure-charts-template.git"
-}
-
-variable "domain_name" {
-  type        = string
-  description = "The public domain to create public DNS zone for."
-}
-
-variable "email" {
-  description = "E-mail contact address for DNS zone."
-  type        = string
-}
-
-variable "ak_sk_security_token" {
-  type        = string
-  description = "Security Token for temporary AK/SK"
 }
 
 variable "otc_user_id" {
@@ -79,13 +57,19 @@ variable "admin_website_password" {
   description = "Password for the admin website"
 }
 
-locals {
-  chart_versions = {
-    traefik             = "35.2.0"
-    cert-manager        = "1.17.4"
-    cce_storage_classes = "2.0.2"
-    argocd              = "18.2.0"
-    argocd_apps         = "2.0.2"
-    kyverno             = "3.1.1"
-  }
+variable "ak_sk_security_token" {
+  type        = string
+  description = "Security Token for temporary AK/SK"
+}
+variable "chart_versions" {
+  type = object({
+    traefik             = string
+    cert-manager        = string
+    prometheus-stack    = string
+    cce_storage_classes = string
+    argocd              = string
+    argocd_apps         = string
+    kyverno             = string
+  })
+  description = "Versions of the charts bootstrapped by Tofu."
 }

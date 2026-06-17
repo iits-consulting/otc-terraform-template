@@ -65,6 +65,7 @@ variable "chart_versions" {
   type = object({
     traefik             = string
     cert-manager        = string
+    prometheus-stack    = string
     cce_storage_classes = string
     argocd              = string
     argocd_apps         = string

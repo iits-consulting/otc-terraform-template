@@ -1,6 +1,7 @@
 variable "region" {
   type        = string
   description = "OTC region for the project: eu-de(default) or eu-nl"
+  default     = "eu-de"
 }
 
 variable "availability_zones" {
@@ -14,7 +15,7 @@ variable "vpc_cidr" {
 }
 
 variable "cluster_config" {
-  description = "CCE cluster and node pool configuration parameters"
+  description = "CCE cluster configuration parameters"
   type = object({
     cluster_version        = string // CCE version for the cluster
     high_availability      = bool   // Create the cluster in highly available mode
@@ -26,7 +27,7 @@ variable "cluster_config" {
 }
 
 variable "node_pool_config" {
-  description = "CCE cluster and node pool configuration parameters"
+  description = "CCE node pool configuration parameters"
   type = object({
     node_pool_os             = string // Node pool operating system
     node_pool_flavor         = string // Node specifications in otc flavor format

@@ -30,6 +30,31 @@ locals {
         }
       }
     }
+    prometheus-stack = {
+      version = var.chart_versions.prometheus-stack
+      values = {
+        prometheusStack = {
+          crds = {
+            enabled = true
+          }
+        }
+      }
+    }
+    traefik = {
+      version = var.chart_versions.traefik
+      values = {
+        traefik = {
+          kubernetesCRD = {
+            enabled = true
+          }
+          metrics = {
+            prometheus = {
+              disableAPICheck = true
+            }
+          }
+        }
+      }
+    }
   }
 }
 

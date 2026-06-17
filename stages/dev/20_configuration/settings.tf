@@ -1,24 +1,12 @@
 terraform {
-  required_version = "1.9.0"
+  required_version = "1.10.2"
 
-  ##### STATE BACKEND CONFIGURATION #####
-  backend "s3" {
-    bucket                      = "${var.context}-${var.stage}-tfstate"
-    key                         = "tfstate-${split("_", basename(abspath(path.module)))[1]}"
-    region                      = var.region
-    endpoints = {
-      s3 = "https://obs.${var.region}.otc.t-systems.com"
-    }
-    skip_region_validation      = true
-    skip_credentials_validation = true
-    skip_requesting_account_id  = true
-    skip_s3_checksum            = true
-  }
+  //TODO Add backend config S3 here
 
   required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "2.38.0"
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
     }
     opentelekomcloud = {
       source  = "opentelekomcloud/opentelekomcloud"
@@ -26,7 +14,11 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.17"
+      version = "~> 3.1"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "~> 1.19"
     }
   }
 }

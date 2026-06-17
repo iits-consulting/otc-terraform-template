@@ -58,8 +58,9 @@ The following services we will deploy later
    ![credentials.png](documentation%2Fcredentials.png)
 
 5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by OpenTofu or by the otc-auth cli tool
-   - replace all "REPLACE_ME" placeholders with the correct values
-   - source the updated .envrc file like this "source .envrc"
+   - replace all "REPLACE_ME" placeholders with the values from your credentials e-mail
+   - set `TF_VAR_argocd_repo_url` to your own infrastructure-charts fork from step 2
+   - source the updated .envrc file like this "source .envrc" — it validates your values via `check-setup.sh` and stops with a list of problems if anything is missing or malformed
 
 ## Create the kubernetes cluster and other infrastructure components
 

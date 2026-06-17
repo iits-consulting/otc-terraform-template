@@ -26,12 +26,20 @@ _check_otc_setup() {
         && ! "$TF_VAR_context" =~ ^[a-z0-9-]+$ ]]; then
     _OTC_ERRORS+=("TF_VAR_context must be lowercase letters, digits and hyphens only (got '$TF_VAR_context')")
   fi
+  if [[ -n "$OS_DOMAIN_NAME" && "$OS_DOMAIN_NAME" != "REPLACE_ME" \
+        && "$OS_DOMAIN_NAME" != OTC* ]]; then
+    _OTC_ERRORS+=("OS_DOMAIN_NAME must start with 'OTC' (got '$OS_DOMAIN_NAME')")
+  fi
   if [[ -n "$TF_VAR_email" && "$TF_VAR_email" != "REPLACE_ME" \
         && ! "$TF_VAR_email" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
     _OTC_ERRORS+=("TF_VAR_email does not look like an email address (got '$TF_VAR_email')")
   fi
   if [[ "$TF_VAR_argocd_repo_url" == "https://github.com/iits-consulting/otc-infrastructure-charts-template.git" ]]; then
     _OTC_ERRORS+=("TF_VAR_argocd_repo_url still points to the template repo — fork otc-infrastructure-charts-template and use your own repository URL")
+  fi
+  if [[ -n "$TF_VAR_argocd_repo_url" && "$TF_VAR_argocd_repo_url" != "REPLACE_ME" \
+        && "$TF_VAR_argocd_repo_url" != *.git ]]; then
+    _OTC_ERRORS+=("TF_VAR_argocd_repo_url should be a git URL ending in '.git' (got '$TF_VAR_argocd_repo_url')")
   fi
   if [[ -n "$TF_VAR_otc_user_id" && "$TF_VAR_otc_user_id" != "REPLACE_ME" \
         && ! "$TF_VAR_otc_user_id" =~ ^[0-9a-f]{32}$ ]]; then

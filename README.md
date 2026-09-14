@@ -13,13 +13,11 @@ Here is what we want to achieve:
 
 ![admin-dashboard.png](documentation%2Fadmin-dashboard.png)
 
-The following services we will deploy later
+OpenTofu bootstraps the cluster platform (Traefik, cert-manager, Kyverno, storage classes, ArgoCD). ArgoCD then deploys the following services from your infrastructure-charts fork:
 
 - Admin Dashboard
 - Basic Auth Gateway
-- Storage Classes
 - Elastic Stack (kibana/elasticsearch/filebeat)
-- Kyverno
 
 **Please keep in mind this workshop just teaches the basics. For a proper and secure production setup please contact us at kontakt@iits-consulting.de**
 
@@ -53,12 +51,27 @@ The following services we will deploy later
    - Permissions
      - Contents -> Read-Only
      - Commit Status -> Read-Only
-4. You should have got an E-Mail with your credentials the format looks like this
+4. You received a credentials sheet from us. It looks like this, and every key that also exists in `.envrc` / `secrets.sh` carries the same name:
 
-   ![credentials.png](documentation%2Fcredentials.png)
+   ```yaml
+   eu-de_<context>:
+     <username>:
+       TF_VAR_context: <context>
+       TF_VAR_domain_name: <context>.tcp-workshop.iits.tech
+       TF_VAR_email: <context>@kumo-ops.com
+       OS_PROJECT_NAME: eu-de_<context>
+       OS_DOMAIN_NAME: OTC000000000010000XXXXX
+       OS_USERNAME: <username>
+       OS_PASSWORD: <password>
+       TF_VAR_otc_user_id: <32 hex chars>
+       TF_VAR_dockerhub_username: <docker hub user>
+       TF_VAR_dockerhub_password: <docker hub token>
+       kasm_url: ...          # only if you use KASM
+       cendo_url: ...         # workshop room
+   ```
 
 5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by OpenTofu or by the otc-auth cli tool
-   - replace all "REPLACE_ME" placeholders with the values from your credentials e-mail
+   - replace all "REPLACE_ME" placeholders with the values from your credentials sheet
    - set `TF_VAR_argocd_repo_url` to your own infrastructure-charts fork from step 2
    - source the updated .envrc file like this "source .envrc" — it validates your values via `check-setup.sh` and stops with a list of problems if anything is missing or malformed
 
@@ -133,12 +146,12 @@ First we will access ArgoCD over a kubectl port-forward. To do that execute the 
 ```shell
 # This command will make the argo command available (not necessary if you use KASM)
 source shell-helper.sh
-# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/
+# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/argocd
 # It will print out the Username and the Password on the first line and the browser should open automatically.
 argo
 ```
 
-After some minutes argocd is also available over your domain like this: https://admin.${TF_VAR_context}.iits.tech
+After some minutes argocd is also available over your domain like this: https://admin.${TF_VAR_domain_name}/argocd
 
 ## Go over to Argo and deploy some services
 

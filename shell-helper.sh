@@ -2,7 +2,12 @@
 LANG=en_us_88591
 
 function argoCredentials(){
-  local ARGOCD_PASSWORD=$( kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data['password']}" | base64 -d)
+  # Tofu sets the admin password to TF_VAR_admin_website_password, so ArgoCD never
+  # creates argocd-initial-admin-secret. The secret is only there for older setups.
+  local ARGOCD_PASSWORD="$TF_VAR_admin_website_password"
+  if [[ -z "$ARGOCD_PASSWORD" ]]; then
+    ARGOCD_PASSWORD=$( kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data['password']}" | base64 -d)
+  fi
   echo "Username=admin, password=$ARGOCD_PASSWORD"
 }
 

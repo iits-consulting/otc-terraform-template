@@ -1,3 +1,15 @@
+// ArgoCD only accepts the admin password as a bcrypt hash, and bcrypt() returns a
+// different hash on every run. terraform_data keeps one hash in the state and rehashes
+// only when the password itself changes.
+resource "terraform_data" "argocd_admin_password" {
+  triggers_replace = [var.admin_website_password]
+  input            = bcrypt(var.admin_website_password)
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+
 // ArgoCD server
 resource "helm_release" "argocd" {
   name                  = "argocd"
@@ -12,6 +24,12 @@ resource "helm_release" "argocd" {
   render_subchart_notes = true
   dependency_update     = true
   wait_for_jobs         = true
+
+  // login is admin / TF_VAR_admin_website_password
+  set_sensitive = [{
+    name  = "argo-cd.configs.secret.argocdServerAdminPassword"
+    value = terraform_data.argocd_admin_password.output
+  }]
 
   values = [
     yamlencode({

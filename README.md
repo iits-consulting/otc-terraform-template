@@ -1,162 +1,295 @@
-# Blueprint for iits OTC GitOps
+# Blueprint for iits T Cloud Public GitOps
 
-## Introduction
+<table>
+<tr>
+<td width="170" valign="top">
+<img src="documentation/kumo-kubernetes.webp" alt="Kumo builds a Kubernetes cluster" width="150" />
+</td>
+<td valign="top">
 
-During this Workshop/Blueprint you will learn the basics about proper automation of infrastructure and how to bootstrap ArgoCD.
-A similar Approach also applies to FluxCD.
+You build a CCE Kubernetes cluster on T Cloud Public with OpenTofu, and then ArgoCD takes
+over and deploys the applications from your own Git repository. The same approach also works with
+FluxCD.
 
-If you want to use this setup without attending our workshop please do first the following step
+OpenTofu sets up the cluster platform (Traefik, cert-manager, Kyverno, storage classes,
+ArgoCD). ArgoCD deploys everything on top of it from your charts repository.
 
-Here is what we want to achieve:
+**Plan about 45 minutes**, most of it waiting for the cluster to come up.
 
-![big-picture.png](documentation%2Fbig-picture.png)
+</td>
+</tr>
+</table>
 
-![admin-dashboard.png](documentation%2Fadmin-dashboard.png)
+> [!IMPORTANT]
+> This workshop just teaches the basics. For a proper and secure production setup
+> please contact us at kontakt@iits-consulting.de
 
-The following services we will deploy later
+## Contents
 
-- Admin Dashboard
-- Basic Auth Gateway
-- Storage Classes
-- Elastic Stack (kibana/elasticsearch/filebeat)
-- Kyverno
+1. [What we want to achieve](#1-what-we-want-to-achieve)
+   - [How this repository is laid out](#how-this-repository-is-laid-out)
+2. [Preparation](#2-preparation)
+3. [Create the OpenTofu state bucket](#3-create-the-opentofu-state-bucket)
+4. [Create the infrastructure](#4-create-the-infrastructure)
+5. [Validate your setup](#5-validate-your-setup)
+6. [Configure the cluster and bootstrap ArgoCD](#6-configure-the-cluster-and-bootstrap-argocd)
+7. [Access the ArgoCD UI](#7-access-the-argocd-ui)
+8. [Go over to Argo and deploy some services](#8-go-over-to-argo-and-deploy-some-services)
+- [Appendix A: run it without KASM](#appendix-a-run-it-without-kasm)
+- [Appendix B: do the workshop on your own tenant](#appendix-b-do-the-workshop-on-your-own-tenant)
 
-**Please keep in mind this workshop just teaches the basics. For a proper and secure production setup please contact us at kontakt@iits-consulting.de**
+---
 
-## Tools Requirements (not necessary if you use KASM)
+## 1. What we want to achieve
 
-- Install **OpenTofu** in the version **1.10.2**. To manage different versions of OpenTofu on your machine, we recommend to use the tool [tenv](https://github.com/tofuutils/tenv)
-- Install [otc-auth](https://github.com/iits-consulting/otc-auth). We need it to be able to login over CLI and getting the kube config
-- A proper Shell. If you are using Windows please use GitBash
-- [kubectl cli](https://kubernetes.io/de/docs/tasks/tools/install-kubectl)
-- git
-- Github Account
+<img src="documentation/big-picture.png" alt="Big picture of the setup" width="800" />
 
-## Preparation & Requirements
+The deployed admin dashboard is the entry point to all services:
 
-1. First we will pull the OpenTofu sourcecode. Please go to this site: https://github.com/iits-consulting/otc-terraform-template (not necessary if you use KASM)
-   ![clone-otc-terraform-template.png](documentation%2Fclone-otc-terraform-template.png)
+<img src="documentation/admin-dashboard.png" alt="Admin dashboard" width="600" />
 
-- Click on _Code_
-- Clone the repository
+ArgoCD deploys the following services from your charts repository:
 
-2. Next step is to create a fork for the ArgoCD project. Please go to this link: https://github.com/iits-consulting/otc-infrastructure-charts-template
+| Service | What it is |
+| --- | --- |
+| Admin Dashboard | Entry point to the deployed services |
+| Basic Auth Gateway | Protects the exposed services |
+| Elastic Stack | kibana, elasticsearch, filebeat |
 
-- Click on _Use this template_
-- Click on _Create a new repository_
+---
+
+## How this repository is laid out
+
+You run `tofu apply` three times, in three different folders, always in this order:
+
+| Folder | What it creates | Section |
+| --- | --- | --- |
+| `stages/dev/` | The OBS bucket that stores the OpenTofu state | [3](#3-create-the-opentofu-state-bucket) |
+| `stages/dev/00_infra` | VPC, SNAT, load balancer, CCE cluster, DNS zones | [4](#4-create-the-infrastructure) |
+| `stages/dev/20_configuration` | Traefik, cert-manager, Kyverno, storage classes, ArgoCD | [6](#6-configure-the-cluster-and-bootstrap-argocd) |
+
+---
+
+## 2. Preparation
+
+### 2.1 Create your charts repository
+
+ArgoCD later deploys everything from this repository, so it has to be yours.
+Go to https://github.com/iits-consulting/otc-infrastructure-charts-template and
+
+- click on _Use this template_
+- click on _Create a new repository_
   - choose a repository name
   - select _Private_ repository
 
-3. Create now a Github Access Token of your Fork for the repo from step 2. It is needed for ArgoCD to be able to pull information from there
-   - Click [here](https://github.com/settings/tokens?type=beta) to do that
-   - Select _Only select repositories_ and choose your fork of the infrastructure-charts
-   - Permissions
-     - Contents -> Read-Only
-     - Commit Status -> Read-Only
-4. You should have got an E-Mail with your credentials the format looks like this
+### 2.2 Create a GitHub access token
 
-   ![credentials.png](documentation%2Fcredentials.png)
+ArgoCD needs it to pull from the repository you just created.
+Create it [here](https://github.com/settings/tokens?type=beta):
 
-5. Adjust the .envrc and secrets.sh file. The .envrc is needed to set environment variables which are used by OpenTofu or by the otc-auth cli tool
-   - replace all "REPLACE_ME" placeholders with the values from your credentials e-mail
-   - set `TF_VAR_argocd_repo_url` to your own infrastructure-charts fork from step 2
-   - source the updated .envrc file like this "source .envrc" — it validates your values via `check-setup.sh` and stops with a list of problems if anything is missing or malformed
+- select _Only select repositories_ and choose your charts repository
+- permissions:
+  - Contents: Read-Only
+  - Commit Status: Read-Only
 
-## Create the kubernetes cluster and other infrastructure components
+### 2.3 Get your credentials sheet
 
-First navigate to the directory `stages/dev/`
+You received a credentials sheet from us. The key names match the variables in `.envrc`
+and `secrets.sh` exactly, so you can copy the values over one by one.
 
-### Create OpenTofu state bucket
+`<context>` is your business context, for example your company or department name. It
+shows up in the T Cloud Public project name and in your workshop domain.
 
-To be able to store the state of OpenTofu somewhere secure, we need first to create a remote tfstate backend.
-The remote tfstate backend is in this case a OBS/S3 Bucket. Within this bucket we store the current state of the OTC infrastructure which we will create.
+```yaml
+eu-de_<context>:
+  <username>:
+    TF_VAR_context: <context>
+    TF_VAR_domain_name: <context>.tcp-workshop.iits.tech
+    TF_VAR_email: <context>@kumo-ops.com
+    OS_PROJECT_NAME: eu-de_<context>
+    OS_DOMAIN_NAME: OTC000000000010000XXXXX
+    OS_USERNAME: <username>
+    OS_PASSWORD: <password>
+    TF_VAR_otc_user_id: <32 hex chars>
+    TF_VAR_dockerhub_username: <docker hub user>
+    TF_VAR_dockerhub_password: <docker hub token>
+    kasm_url: ...          # only if you use KASM
+    cendo_url: ...         # workshop room
+```
 
-1. Make sure you are in the folder `stages/dev/`
-2. Execute
+### 2.4 Adjust `.envrc` and `secrets.sh`
+
+The `.envrc` sets the environment variables used by OpenTofu and by the otc-auth CLI.
+
+- replace all `REPLACE_ME` placeholders with the values from your credentials sheet
+- set `TF_VAR_argocd_repo_url` to your charts repository from step 2.1
+- source the updated file:
+
+  ```shell
+  source .envrc
+  ```
+
+  It validates your values via `check-setup.sh` and stops with a list of problems
+  if anything is missing or malformed.
+
+---
+
+## 3. Create the OpenTofu state bucket
+
+OpenTofu needs a safe place for its state file. Create an OBS/S3 bucket for it first, then
+point every stage at that bucket.
+
+1. Go into the folder `stages/dev/`
+2. Run (takes less than a minute):
+
    ```shell
    tofu init
-   ```
-3. Execute
-   ```shell
    tofu apply
    ```
-4. Wait for completion
-5. After completion we should get an output which looks like this:
-   ![terraform-output-remote-state.png](documentation%2Fterraform-output-remote-state.png)
-6. The output prints a ready-to-use `backend "s3"` block and lists every stage `settings.tf` file it belongs in. Copy that block into the section marked with `TODO Add backend config S3 here` in each stage's `settings.tf` (`00_infra/settings.tf` and `20_configuration/settings.tf`).
 
-## Execute OpenTofu for infrastructure
+3. Wait for completion. The output should look like this:
+
+   <img src="documentation/terraform-output-remote-state.png" alt="terraform output remote state" width="600" />
+
+4. The output prints a ready-to-use `backend "s3"` block and lists every stage
+   `settings.tf` file it belongs in. Copy that block into the section marked with
+   `TODO Add backend config S3 here` in each stage's `settings.tf`
+   (`00_infra/settings.tf` and `20_configuration/settings.tf`).
+
+---
+
+## 4. Create the infrastructure
 
 1. Switch into the folder `stages/dev/00_infra`
-2. Take a look at `cluster.tf`, `network.tf` and `dns.tf` to understand what we set up (the VPC, SNAT, public load balancer, CCE cluster with node pools, and the public/private DNS zones)
-   - The sizing and versions live in `_infra.auto.tfvars` (cluster version, node flavor, availability zones, CIDRs). Adjust them if you like.
-     - See the available modules under https://registry.terraform.io/namespaces/iits-consulting
-   - Execute `tofu init` and `tofu apply`
-     - It might take up to 15 Minutes until everything is up
+2. Read `cluster.tf`, `network.tf` and `dns.tf` to see what gets created (the VPC, SNAT,
+   public load balancer, CCE cluster with node pools, and the public/private DNS zones)
+3. The sizing and versions live in `_infra.auto.tfvars` (cluster version, node flavor,
+   availability zones, CIDRs). Adjust them if you like. See the available modules under
+   https://registry.terraform.io/namespaces/iits-consulting
+4. Run:
 
-## Validate your setup is up and running
+   ```shell
+   tofu init
+   tofu apply
+   ```
 
-- Check Kubernetes
-  - via OpenTofu, we've already fetched the kube config
-  - execute the following command inside your cli:
-    ```shell
-    kubectl get nodes
-    ```
-- Check DNS
-  - execute the following command inside your cli:
-  ```shell
-  nslookup $TF_VAR_domain_name
-  ```
-  - It should point to an address similar to `80.*.*.*`
+> [!NOTE]
+> The cluster needs up to 15 minutes to come up. Do not cancel the running apply.
+
+---
+
+## 5. Validate your setup
+
+**Check Kubernetes.** OpenTofu already fetched the kube config for you:
+
+```shell
+kubectl get nodes
+```
+
+**Check DNS.** It should point to an address similar to `80.*.*.*`:
+
+```shell
+nslookup $TF_VAR_domain_name
+```
 
 Congrats, your infrastructure is working properly!
 
-## Configure the cluster and bootstrap ArgoCD
+---
 
-Now we want to bring some life into our cluster. The `20_configuration` stage bootstraps the cluster platform and then deploys ArgoCD, which takes over everything from our Fork of the _Preparation & Requirements Step 2_.
+## 6. Configure the cluster and bootstrap ArgoCD
 
-- Go into the folder `./stages/dev/20_configuration`
-- Take a look at the `.tf` files to understand what we set up:
-  - `crds.tf` installs the CRDs (cert-manager, Kyverno, Prometheus stack) needed before the corresponding controllers and ArgoCD applications can run
-  - `kyverno.tf` deploys Kyverno (policy engine and image pull secret injection)
-  - `traefik.tf` deploys the Traefik ingress controller wired to the public load balancer
-  - `cert-manager.tf` deploys cert-manager with the OTC DNS cluster issuer for Let's Encrypt certificates
-  - `cce_storage_classes.tf` deploys the CCE storage classes with a KMS-encrypted default
-  - `argo.tf` deploys ArgoCD and the ArgoCD apps that point at your infrastructure-charts fork
-- Execute `tofu init` and `tofu apply`
-- ArgoCD should slowly start to boot and after around 3-4 Minutes it should be finished
+Now bring some life into the cluster. The `20_configuration` stage bootstraps
+the cluster platform and then deploys ArgoCD, which takes over everything from the charts
+repository you created in step 2.1.
 
-## Access ArgoCD UI
+Go into the folder `./stages/dev/20_configuration`. These are the `.tf` files and what
+they deploy:
 
-First we will access ArgoCD over a kubectl port-forward. To do that execute the following commands in your cli:
+| File | What it deploys |
+| --- | --- |
+| `crds.tf` | The CRDs (cert-manager, Kyverno, Prometheus stack) needed before the corresponding controllers and ArgoCD applications can run |
+| `kyverno.tf` | Kyverno (policy engine and image pull secret injection) |
+| `traefik.tf` | The Traefik ingress controller wired to the public load balancer |
+| `cert-manager.tf` | cert-manager with the T Cloud Public DNS cluster issuer for Let's Encrypt certificates |
+| `cce_storage_classes.tf` | The CCE storage classes with a KMS-encrypted default |
+| `argo.tf` | ArgoCD and the ArgoCD apps that point at your charts repository |
+
+Then run:
+
+```shell
+tofu init
+tofu apply
+```
+
+ArgoCD starts booting and is finished after around 3 to 4 minutes.
+
+---
+
+## 7. Access the ArgoCD UI
+
+Open ArgoCD through a kubectl port-forward:
 
 ```shell
 # This command will make the argo command available (not necessary if you use KASM)
 source shell-helper.sh
-# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/
+# Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/argocd
 # It will print out the Username and the Password on the first line and the browser should open automatically.
 argo
 ```
 
-After some minutes argocd is also available over your domain like this: https://admin.${TF_VAR_context}.iits.tech
+Log in with the user `admin` and your `TF_VAR_admin_website_password`, the same password
+as the admin dashboard.
 
-## Go over to Argo and deploy some services
+After some minutes ArgoCD is also available over your domain:
+`https://admin.${TF_VAR_domain_name}/argocd`
 
-We are finished with the OpenTofu part and will switch now over to this repository: https://github.com/iits-consulting/otc-infrastructure-charts-template
+---
 
-## Do the workshop on your tenant
+## 8. Go over to Argo and deploy some services
 
-If you want to do the workshop on your tenant you need to create a user first and configure the IAM.
+The OpenTofu part is done. Continue in this repository:
+https://github.com/iits-consulting/otc-infrastructure-charts-template
 
-Please do the following steps:
+---
 
-1. Login into the OTC UI
+## Appendix A: run it without KASM
+
+Most workshops run on our KASM setup, where everything below is already prepared.
+Only if you work on your own machine you need these tools and the repository clone.
+
+### Tools
+
+| Tool | Notes |
+| --- | --- |
+| [OpenTofu](https://opentofu.org) **1.10.2** | Use [tenv](https://github.com/tofuutils/tenv) to manage versions |
+| [otc-auth](https://github.com/iits-consulting/otc-auth) | CLI login and kube config |
+| [kubectl](https://kubernetes.io/de/docs/tasks/tools/install-kubectl) | Kubernetes CLI |
+| A bash shell | On Windows use GitBash |
+| git | |
+| GitHub account | |
+
+### Clone this repository
+
+Go to https://github.com/iits-consulting/otc-terraform-template, click on _Code_
+and clone the repository.
+
+<img src="documentation/clone-otc-terraform-template.png" alt="clone otc terraform template" width="600" />
+
+---
+
+## Appendix B: do the workshop on your own tenant
+
+If you want to do the workshop on your tenant you need to create a user first and
+configure the IAM:
+
+1. Login into the T Cloud Public UI
 2. Go to _IAM_
 3. Create a new project for the workshop
-4. Create a user and assign it the admin role
-   - You will need the username & password
-5. Go to _Agencies_ ![agencies.png](documentation%2Fagencies.png)
-6. For _EVSAccessKMS_ click on _Authorize_
-   - Add _KMS Administrator_ for _All resources_
-7. For _cce_admin_trust_ click on _Authorize_
-   - Add _Tenant Administrator (Exclude IAM)_ for _All resources_
+4. Create a user and assign it the admin role (you will need the username and password)
+5. Go to _Agencies_
+
+   <img src="documentation/agencies.png" alt="agencies" width="600" />
+
+6. For _EVSAccessKMS_ click on _Authorize_ and add _KMS Administrator_ for _All resources_
+7. For _cce_admin_trust_ click on _Authorize_ and add _Tenant Administrator (Exclude IAM)_
+   for _All resources_

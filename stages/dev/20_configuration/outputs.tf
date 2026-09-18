@@ -28,9 +28,9 @@ output "argocd_url" {
   value       = "https://admin.${var.domain_name}/argocd"
 }
 
-# ArgoCD generates its initial admin password at boot and stores it in a
-# cluster secret. Run this command to read it (user: admin).
-output "argocd_password_command" {
-  description = "Command to fetch the initial ArgoCD admin password (user: admin)."
-  value       = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
+# Tofu sets the ArgoCD admin password to the same value as the dashboard password,
+# so there is only one login to remember.
+output "argocd_credentials" {
+  description = "Login for the ArgoCD UI."
+  value       = "user: admin, password: same as admin_dashboard_password"
 }

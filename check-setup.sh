@@ -1,6 +1,6 @@
 #!/bin/bash
 # Validates that every REPLACE_ME placeholder in secrets.sh / .envrc has been
-# replaced and that the values look sane, before we authenticate against OTC.
+# replaced and that the values look sane, before we authenticate against T Cloud Public.
 
 _require_var() { # name value
   if [[ -z "$2" || "$2" == "REPLACE_ME" ]]; then
@@ -20,6 +20,7 @@ _check_otc_setup() {
   _require_var TF_VAR_context            "$TF_VAR_context"
   _require_var TF_VAR_email              "$TF_VAR_email"
   _require_var TF_VAR_otc_user_id        "$TF_VAR_otc_user_id"
+  _require_var TF_VAR_domain_name        "$TF_VAR_domain_name"
   _require_var TF_VAR_argocd_repo_url    "$TF_VAR_argocd_repo_url"
 
   if [[ -n "$TF_VAR_context" && "$TF_VAR_context" != "REPLACE_ME" \
@@ -40,6 +41,16 @@ _check_otc_setup() {
   if [[ -n "$TF_VAR_argocd_repo_url" && "$TF_VAR_argocd_repo_url" != "REPLACE_ME" \
         && "$TF_VAR_argocd_repo_url" != *.git ]]; then
     _OTC_ERRORS+=("TF_VAR_argocd_repo_url should be a git URL ending in '.git' (got '$TF_VAR_argocd_repo_url')")
+  fi
+  # The zone is delegated to the participant's project by the workshop bootstrap,
+  # so a typo here means cert-manager never gets a certificate.
+  if [[ -n "$TF_VAR_domain_name" && "$TF_VAR_domain_name" != "REPLACE_ME" \
+        && ! "$TF_VAR_domain_name" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]]; then
+    _OTC_ERRORS+=("TF_VAR_domain_name must be a domain like <context>.tcp-workshop.iits.tech (got '$TF_VAR_domain_name')")
+  fi
+  if [[ -n "$TF_VAR_domain_name" && "$TF_VAR_domain_name" != "REPLACE_ME" \
+        && -n "$TF_VAR_context" && "$TF_VAR_domain_name" != "$TF_VAR_context".* ]]; then
+    _OTC_ERRORS+=("TF_VAR_domain_name should start with your context '$TF_VAR_context' (got '$TF_VAR_domain_name')")
   fi
   if [[ -n "$TF_VAR_otc_user_id" && "$TF_VAR_otc_user_id" != "REPLACE_ME" \
         && ! "$TF_VAR_otc_user_id" =~ ^[0-9a-f]{32}$ ]]; then

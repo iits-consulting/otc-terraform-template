@@ -24,3 +24,20 @@ function argo(){
 alias kubens='kubectl config set-context --current --namespace '
 alias deleteErrorPods="kubectl delete pods --field-selector status.phase=Failed --all-namespaces"
 alias kubeEnv="kubectl config current-context"
+
+# kubectl tab completion, for this shell only
+if command -v kubectl >/dev/null 2>&1; then
+  if [[ -n "$ZSH_VERSION" ]]; then
+    autoload -Uz compinit && compinit
+    source <(kubectl completion zsh)
+  else
+    if ! declare -F _get_comp_words_by_ref >/dev/null; then
+      for f in /usr/share/bash-completion/bash_completion /etc/bash_completion; do
+        [[ -r "$f" ]] && source "$f" && break
+      done
+    fi
+    if declare -F _get_comp_words_by_ref >/dev/null; then
+      source <(kubectl completion bash)
+    fi
+  fi
+fi

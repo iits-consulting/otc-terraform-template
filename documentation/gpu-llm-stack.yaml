@@ -1,0 +1,180 @@
+# Ollama plus Open WebUI as the chat frontend.
+# Ollama lands on the GPU node because it requests nvidia.com/gpu, Open WebUI stays
+# on the normal CPU nodes.
+#
+# REPLACE_ME_DOMAIN is your TF_VAR_domain_name. Apply it like this:
+#   sed "s/REPLACE_ME_DOMAIN/$TF_VAR_domain_name/" documentation/gpu-llm-stack.yaml | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai
+---
+# Model weights are cached here so a pod restart does not download them again.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-cache
+  namespace: ai
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      # The GPU node pool carries gpu-node=true:NoSchedule, so only pods that
+      # tolerate it get onto the expensive node. Open WebUI deliberately does not.
+      tolerations:
+        - key: gpu-node
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+      containers:
+        - name: ollama
+          image: ollama/ollama:0.34.2
+          env:
+            - name: OLLAMA_HOST
+              value: 0.0.0.0
+            # Keep the model in VRAM instead of unloading it after 5 minutes, so
+            # nvidia-smi actually shows something between two chat messages.
+            - name: OLLAMA_KEEP_ALIVE
+              value: 1h
+          ports:
+            - containerPort: 11434
+          resources:
+            requests:
+              cpu: "1"
+              memory: 4Gi
+            limits:
+              memory: 16Gi
+              # Requesting a GPU is what pins this pod to the GPU node pool.
+              nvidia.com/gpu: 1
+          # Pull the model once the server is up. Swap the name to serve something else,
+          # the full list is at https://ollama.com/library
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - "until ollama ls >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b"
+          volumeMounts:
+            - name: cache
+              mountPath: /root/.ollama
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 11434
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: cache
+          persistentVolumeClaim:
+            claimName: model-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: ai
+spec:
+  selector:
+    app: ollama
+  ports:
+    - port: 11434
+      targetPort: 11434
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui
+  namespace: ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: open-webui
+  template:
+    metadata:
+      labels:
+        app: open-webui
+    spec:
+      containers:
+        - name: open-webui
+          image: ghcr.io/open-webui/open-webui:main
+          env:
+            - name: OLLAMA_BASE_URL
+              value: http://ollama.ai.svc.cluster.local:11434
+            # This is published on your domain, so Open WebUI does its own signup
+            # and login. The first account you create becomes the admin.
+            - name: WEBUI_AUTH
+              value: "true"
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: data
+              mountPath: /app/backend/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: open-webui-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui-data
+  namespace: ai
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+  namespace: ai
+spec:
+  selector:
+    app: open-webui
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+# The Traefik default certificate from the workshop already covers *.REPLACE_ME_DOMAIN,
+# so tls: {} is enough and no extra cert-manager Certificate is needed.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: open-webui
+  namespace: ai
+spec:
+  entryPoints: [websecure]
+  routes:
+    - kind: Rule
+      match: Host(`ai.REPLACE_ME_DOMAIN`)
+      services:
+        - name: open-webui
+          port: 80
+  tls: {}

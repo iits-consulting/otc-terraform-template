@@ -230,7 +230,7 @@ ArgoCD starts booting and is finished after around 3 to 4 minutes.
 Open ArgoCD through a kubectl port-forward:
 
 ```shell
-# This command will make the argo command available (not necessary if you use KASM)
+# Already done by `source .envrc`, only needed in a shell where you skipped that
 source shell-helper.sh
 # Opens a tunnel to your kubernetes cluster and exposes ArgoCD under http://localhost:8080/argocd
 # It will print out the Username and the Password on the first line and the browser should open automatically.

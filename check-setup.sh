@@ -1,6 +1,6 @@
 #!/bin/bash
 # Validates that every REPLACE_ME placeholder in secrets.sh / .envrc has been
-# replaced and that the values look sane, before we authenticate against OTC.
+# replaced and that the values look sane, before we authenticate against T Cloud Public.
 
 _require_var() { # name value
   if [[ -z "$2" || "$2" == "REPLACE_ME" ]]; then

@@ -1,4 +1,4 @@
-# Blueprint for iits OTC GitOps
+# Blueprint for iits T Cloud Public GitOps
 
 <table>
 <tr>
@@ -7,8 +7,8 @@
 </td>
 <td valign="top">
 
-You build a CCE Kubernetes cluster on OTC with OpenTofu, and then ArgoCD takes over and
-deploys the applications from your own Git repository. The same approach also works with
+You build a CCE Kubernetes cluster on T Cloud Public with OpenTofu, and then ArgoCD takes
+over and deploys the applications from your own Git repository. The same approach also works with
 FluxCD.
 
 OpenTofu sets up the cluster platform (Traefik, cert-manager, Kyverno, storage classes,
@@ -98,7 +98,7 @@ You received a credentials sheet from us. The key names match the variables in `
 and `secrets.sh` exactly, so you can copy the values over one by one.
 
 `<context>` is your business context, for example your company or department name. It
-shows up in the OTC project name and in your workshop domain.
+shows up in the T Cloud Public project name and in your workshop domain.
 
 ```yaml
 eu-de_<context>:
@@ -210,7 +210,7 @@ they deploy:
 | `crds.tf` | The CRDs (cert-manager, Kyverno, Prometheus stack) needed before the corresponding controllers and ArgoCD applications can run |
 | `kyverno.tf` | Kyverno (policy engine and image pull secret injection) |
 | `traefik.tf` | The Traefik ingress controller wired to the public load balancer |
-| `cert-manager.tf` | cert-manager with the OTC DNS cluster issuer for Let's Encrypt certificates |
+| `cert-manager.tf` | cert-manager with the T Cloud Public DNS cluster issuer for Let's Encrypt certificates |
 | `cce_storage_classes.tf` | The CCE storage classes with a KMS-encrypted default |
 | `argo.tf` | ArgoCD and the ArgoCD apps that point at your charts repository |
 
@@ -282,7 +282,7 @@ and clone the repository.
 If you want to do the workshop on your tenant you need to create a user first and
 configure the IAM:
 
-1. Login into the OTC UI
+1. Login into the T Cloud Public UI
 2. Go to _IAM_
 3. Create a new project for the workshop
 4. Create a user and assign it the admin role (you will need the username and password)

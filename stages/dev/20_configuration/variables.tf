@@ -1,6 +1,6 @@
 variable "region" {
   type        = string
-  description = "OTC region for the project: eu-de(default) or eu-nl"
+  description = "T Cloud Public region for the project: eu-de(default) or eu-nl"
   default     = "eu-de"
 }
 

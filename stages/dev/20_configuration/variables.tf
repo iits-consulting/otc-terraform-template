@@ -54,7 +54,7 @@ variable "otc_user_id" {
 
 variable "admin_website_password" {
   type        = string
-  description = "Password for the admin website"
+  description = "Password for the admin website and for the ArgoCD admin user"
 }
 
 variable "ak_sk_security_token" {

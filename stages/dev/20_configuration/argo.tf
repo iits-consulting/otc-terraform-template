@@ -87,6 +87,14 @@ resource "helm_release" "argocd_apps" {
       projects = {
         infrastructure-charts = {
           tofuValues = {
+            // The charts repo points back at itself for every chart entry with a `path`,
+            // so the infrastructure-charts repo never has to hardcode its own URL.
+            global = {
+              git = {
+                repoURL        = var.argocd_repo_url
+                targetRevision = "main"
+              }
+            }
             projectValues = {
               context     = var.context
               stage       = var.stage
